@@ -16,3 +16,11 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('pages.admin.makanan');
 });
+
+Route::get('/login', function () {
+    return view('auth.login');
+});
+
+Route::get('/hitung-kalori', function () {
+    return view('pages.pasien.hitung-kalori');
+});
