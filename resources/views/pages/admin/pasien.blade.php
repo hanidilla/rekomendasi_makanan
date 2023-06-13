@@ -7,13 +7,13 @@
             List Pasien
         </h1>
         <button class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm" id="btn-add-pasien"><i
-                class="fas fa-plus fa-sm text-white-50"></i> Tambah Bahan</button>
+                class="fas fa-plus fa-sm text-white-50"></i> Tambah Pasien</button>
     </div>
 
     <div class="card border-0 shadow">
         <div class="card-body">
             <div class="table-responsive">
-                <table id="makanan-tabel">
+                <table id="pasien-tabel">
                     <thead>
                         <tr>
                             <th>No</th>
@@ -103,7 +103,7 @@
 
 @section('script')
     <script>
-        $('#makanan-tabel').DataTable({
+        $('#pasien-tabel').DataTable({
             processing: true,
             serverSide : false,
             ajax : {
@@ -154,13 +154,13 @@
                     console.log(data);
                     alertSuccess("data berhasil disimpan")
                     $('#modal-add-pasien').modal('hide')
-                    $('#makanan-tabel').DataTable().ajax.reload()
+                    $('#pasien-tabel').DataTable().ajax.reload()
                 }
             })
         })
 
 
-        $('#makanan-tabel').on('click', '.btn-edit-pasien', function () {
+        $('#pasien-tabel').on('click', '.btn-edit-pasien', function () {
             let id = $(this).data('id')
             $.ajax({
                 url: `/api/pasien/${id}`,
@@ -196,7 +196,33 @@
                     console.log(data);
                     alertSuccess("data berhasil diupdate")
                     $('#modal-edit-pasien').modal('hide')
-                    $('#makanan-tabel').DataTable().ajax.reload()
+                    $('#pasien-tabel').DataTable().ajax.reload()
+                }
+            })
+        })
+
+        $('#pasien-tabel').on('click', '.btn-delete-pasien', function () {
+            let id = $(this).data('id')
+            Swal.fire({
+                title: 'Apakah anda yakin?',
+                text: "Data akan dihapus secara permanen!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+
+                confirmButtonText: 'Ya, hapus!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: `/api/pasien/${id}`,
+                        type : 'DELETE',
+                        success : function (data) {
+                            console.log(data);
+                            alertSuccess("data berhasil dihapus")
+                            $('#pasien-tabel').DataTable().ajax.reload()
+                        }
+                    })
                 }
             })
         })
