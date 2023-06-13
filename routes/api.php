@@ -3,6 +3,7 @@
 use App\Http\Controllers\BahanMakananController;
 use App\Http\Controllers\FaktorController;
 use App\Http\Controllers\KebutuhanGiziController;
+use App\Http\Controllers\PasienController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -33,4 +34,13 @@ Route::prefix('bahan-makanan')->group(function () {
 Route::prefix('kebutuhan-gizi')->group(function () {
     Route::get("/", [KebutuhanGiziController::class, 'index']);
     Route::post('/', [KebutuhanGiziController::class, 'store']);
+});
+
+
+Route::prefix('pasien')->group(function () {
+    Route::get("/", [PasienController::class, 'index']);
+    Route::post('/', [PasienController::class, 'store']);
+    Route::get('/{id}', [PasienController::class, 'show']);
+    Route::put('/{id}', [PasienController::class, 'update']);
+    Route::delete('/{id}', [PasienController::class, 'destroy']);
 });

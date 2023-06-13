@@ -24,3 +24,7 @@ Route::get('/login', function () {
 Route::get('/hitung-kalori', function () {
     return view('pages.pasien.hitung-kalori');
 });
+
+Route::get('/pasien', function () {
+    return view("pages.admin.pasien");
+});
