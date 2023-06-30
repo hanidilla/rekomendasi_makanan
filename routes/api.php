@@ -3,6 +3,7 @@
 use App\Http\Controllers\BahanMakananController;
 use App\Http\Controllers\FaktorController;
 use App\Http\Controllers\KebutuhanGiziController;
+use App\Http\Controllers\NaiveBayesController;
 use App\Http\Controllers\PasienController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -43,4 +44,12 @@ Route::prefix('pasien')->group(function () {
     Route::get('/{id}', [PasienController::class, 'show']);
     Route::put('/{id}', [PasienController::class, 'update']);
     Route::delete('/{id}', [PasienController::class, 'destroy']);
+});
+
+Route::prefix("nv-bayes")->group(function () {
+    Route::get("/", [NaiveBayesController::class, 'naiveBayes']);
+    Route::get("/probability", [NaiveBayesController::class, 'probability']);
+    Route::get("/mean", [NaiveBayesController::class, 'mean']);
+    Route::get("/stdev", [NaiveBayesController::class, 'deviasi']);
+    Route::get("/normal", [NaiveBayesController::class, 'normalDist']);
 });

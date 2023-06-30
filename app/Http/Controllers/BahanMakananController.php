@@ -29,6 +29,14 @@ class BahanMakananController extends Controller
     {
         try {
             DB::beginTransaction();
+            if ($request->protein > $request->lemak && $request->protein > $request->karbohidrat) {
+                $request['kandungan_makanan'] = 'protein';
+                # code...
+            } else if ($request->lemak > $request->protein && $request->lemak > $request->karbohidrat) {
+                $request['kandungan_makanan'] = 'lemak';
+            } else if ($request->karbohidrat > $request->lemak && $request->karbohidrat > $request->protein) {
+                $request['kandungan_makanan'] = 'karbohidrat';
+            }
             $data = BahanMakanan::create($request->all());
 
             DB::commit();
