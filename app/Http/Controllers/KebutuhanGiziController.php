@@ -49,7 +49,6 @@ class KebutuhanGiziController extends Controller
                 "karbohidrat" => $data["karbohidrat"]
             ];
             $res = $nvb->naiveBayes($payload);
-            dd($res);
             foreach ($res as $key => $value) {
                 # code...
                 Probabilitas::create([
