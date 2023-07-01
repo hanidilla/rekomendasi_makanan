@@ -7,6 +7,8 @@ use App\Models\KoreksiUmur;
 use App\Traits\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\NaiveBayesController as NVB;
+use App\Models\Probabilitas;
 
 class KebutuhanGiziController extends Controller
 {
@@ -38,7 +40,25 @@ class KebutuhanGiziController extends Controller
             $data['protein'] = number_format($this->calProtein($data, $request->stress_fac, $request->activity_fac, $this->ageCor($request->umur)), 2, '.', '');
             $data['lemak'] = number_format($this->calLemak($data, $request->stress_fac, $request->activity_fac, $this->ageCor($request->umur)), 2, '.', '');
             $data['karbohidrat'] = number_format($this->calKarbohidrat($data, $request->stress_fac, $request->activity_fac, $this->ageCor($request->umur)), 2, '.', '');
+
             $kebutuhanGizi = KebutuhanGizi::create($data);
+            $nvb = new NVB();
+            $payload = [
+                "protein" => $data["protein"],
+                "lemak" => $data["lemak"],
+                "karbohidrat" => $data["karbohidrat"]
+            ];
+            $res = $nvb->naiveBayes($payload);
+            dd($res);
+            foreach ($res as $key => $value) {
+                # code...
+                Probabilitas::create([
+                    "kebutuhan_gizi_id" => $kebutuhanGizi["id"],
+                    "probabilitas" =>  $value,
+                    "kategori_makanan" => $key
+                ]);
+            }
+
             DB::commit();
             return $this->success($kebutuhanGizi, 'Kebutuhan Gizi Berhasil Dibuat');
             //code...

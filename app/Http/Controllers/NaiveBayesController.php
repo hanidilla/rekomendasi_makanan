@@ -91,10 +91,6 @@ class NaiveBayesController extends Controller
     public function mean()
     {
         try {
-            // $data = DB::select('SELECT kandungan_makanan, SUM("karbohidrat") as karbohidrat, SUM("protein") as protein, SUM("lemak") as lemak  FROM bahan_makanan GROUP BY ');
-            // dd($data);
-
-            // dd($kategori);
 
             $dataBahan = $this->getDataBahan();
 
@@ -164,26 +160,29 @@ class NaiveBayesController extends Controller
         return $dataStdev;
     }
 
-    public function normalDist($karbo = 1, $protein = 1, $lemak = 1)
+    public function normalDist($karbo, $protein, $lemak)
     {
         $mean = $this->mean();
         $stdev = $this->deviasi();
         $dataNormal = [];
         // dd(\stats_dens_normal);
         foreach ($mean as $k => $v) {
-            $normal = new Continuous\Normal($v["protein"], $stdev[$k]["protein"]);
-            $dataNormal[$k] =  ["protein" =>  $normal->pdf($protein), "lemak" =>  $normal->pdf($lemak), "karbohidrat" =>  $normal->pdf($karbo)];
+            // dd($k);
+            $normalProt = new Continuous\Normal($v["protein"], $stdev[$k]["protein"]);
+            $normalKarbo = new Continuous\Normal($v["karbohidrat"], $stdev[$k]["karbohidrat"]);
+            $normalLemak = new Continuous\Normal($v["lemak"], $stdev[$k]["lemak"]);
+            $dataNormal[$k] =  ["protein" =>  $normalProt->pdf($protein), "lemak" =>  $normalLemak->pdf($lemak), "karbohidrat" =>  $normalKarbo->pdf($karbo)];
         }
-        // dd($dataNormal);
         // return $this->success($dataNormal, "Sukses");
         return $dataNormal;
     }
 
-    public function naiveBayes()
+    public function naiveBayes($payload)
     {
         $prob = $this->probability();
         // dd($prob);
-        $dataNorm = $this->normalDist();
+        // $dataNorm = $this->normalDist();
+        $dataNorm = $this->normalDist($payload['karbohidrat'], $payload['protein'], $payload['lemak']);
         $res = [];
         foreach ($dataNorm as $key => $value) {
             // dd($value["protein"] * $value["lemak"] * $value["karbohidrat"]);

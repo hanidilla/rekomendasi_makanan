@@ -112,6 +112,33 @@
                 })
             }
         })
+
+        $.ajax({
+            url : '/api/pasien',
+            type : "GET",
+            success : function (res) {
+                // console.log(res);
+               var data = res.data;
+               $('#list-pasien').empty().prepend(`<option selected disabled>--- Pilih Pasien ---</option>`);
+               data.forEach(el => {
+                    $('#list-pasien').append(`<option value=${el.id}>${el.nama} </option>`)
+               });
+            }
+        })
+    })
+
+    $('#list-pasien').on("change", function () {
+        $.ajax({
+            url : '/api/pasien/' + $(this).val(),
+            type : 'GET',
+            success : function (data) {
+                console.log(data);
+                var res = data.data;
+                $('#tinggi-badan').val(res.tinggi_badan).attr("disabled", true)
+                $('#berat-badan').val(res.berat_badan).attr("disabled", true)
+                $('#umur').val(res.umur).attr("disabled", true)
+            }
+        })
     })
 
     $('#btn-save-gizi').on('click', function(){
@@ -119,7 +146,7 @@
             url : '/api/kebutuhan-gizi',
             method : 'POST',
             data : {
-                user_id : "1",
+                user_id : $('#list-pasien').val(),
                 tinggi : $('#tinggi-badan').val(),
                 berat : $('#berat-badan').val(),
                 umur : $('#umur').val(),
