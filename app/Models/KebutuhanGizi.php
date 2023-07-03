@@ -25,8 +25,13 @@ class KebutuhanGizi extends Model
     ];
 
 
-    public function user()
+    /**
+     * Get the user associated with the KebutuhanGizi
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function pasien()
     {
-        return $this->belongsTo(User::class);
+        return $this->hasOne(Pasien::class, 'id', 'user_id');
     }
 }

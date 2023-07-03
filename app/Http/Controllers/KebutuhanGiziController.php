@@ -18,7 +18,7 @@ class KebutuhanGiziController extends Controller
     public function index()
     {
         try {
-            $kebutuhanGizi = KebutuhanGizi::all();
+            $kebutuhanGizi = KebutuhanGizi::with('pasien')->get();
             // dd($kebutuhanGizi);
             return $this->success($kebutuhanGizi, 'Berhasil Mendapatkan Semua Kebutuhan Gizi');
             //code...

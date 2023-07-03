@@ -28,3 +28,7 @@ Route::get('/hitung-kalori', function () {
 Route::get('/pasien', function () {
     return view("pages.admin.pasien");
 });
+
+Route::get("/nv-bayes", function () {
+    return view('pages.pasien.naive-bayes');
+});

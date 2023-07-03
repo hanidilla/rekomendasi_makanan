@@ -80,7 +80,7 @@
             ajax: '/api/kebutuhan-gizi',
             columns: [
                 { data: 'id', name: 'DT_RowIndex' },
-                { data: 'user_id', name: 'nama' },
+                { data: 'pasien.nama', name: 'nama' },
                 { data: 'kalori', name: 'kebutuhan_kalori' },
                 { data: 'protein', name: 'protein' },
                 { data: 'lemak', name: 'lemak' },
