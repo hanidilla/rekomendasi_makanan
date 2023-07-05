@@ -98,7 +98,8 @@
                 console.log(res)
                 let faktorAktifitas = res.data.faktor_aktivitas
                 let faktorStress = res.data.faktor_stress
-
+                $('#faktor-aktifitas').empty()
+                $('#faktor-stress').empty()
                 faktorAktifitas.forEach(function(item){
                     $('#faktor-aktifitas').append(`
                         <option value="${item.presentase}">${item.nama}</option>

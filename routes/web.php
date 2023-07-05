@@ -32,3 +32,9 @@ Route::get('/pasien', function () {
 Route::get("/nv-bayes", function () {
     return view('pages.pasien.naive-bayes');
 });
+Route::get("/faktor-aktivitas", function () {
+    return view('pages.admin.faktor-aktivitas');
+});
+Route::get("/faktor-stress", function () {
+    return view('pages.admin.faktor-stress');
+});

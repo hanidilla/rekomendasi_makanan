@@ -46,8 +46,26 @@ Route::prefix('pasien')->group(function () {
     Route::delete('/{id}', [PasienController::class, 'destroy']);
 });
 
+
+Route::prefix("faktor")->group(function () {
+    Route::prefix("aktifitas")->group(function () {
+        Route::get("/", [FaktorController::class, 'getAktivitas']);
+        Route::post("/", [FaktorController::class, 'storeAktivitas']);
+        Route::get("/{id}", [FaktorController::class, 'getAktivitasById']);
+        Route::put("/{id}", [FaktorController::class, 'updateAktivitas']);
+        Route::delete("/{id}", [FaktorController::class, 'deleteAktivitas']);
+    });
+    Route::prefix("stress")->group(function () {
+        Route::get("/", [FaktorController::class, 'getStress']);
+        Route::post("/", [FaktorController::class, 'storeStress']);
+        Route::get("/{id}", [FaktorController::class, 'getStressById']);
+        Route::put("/{id}", [FaktorController::class, 'updateStress']);
+        Route::delete("/{id}", [FaktorController::class, 'deleteStress']);
+    });
+});
 Route::prefix("nv-bayes")->group(function () {
     Route::get("/", [NaiveBayesController::class, 'naiveBayes']);
+    Route::get("/get-data", [NaiveBayesController::class, 'getRes']);
     Route::get("/probability", [NaiveBayesController::class, 'probability']);
     Route::get("/mean", [NaiveBayesController::class, 'mean']);
     Route::get("/stdev", [NaiveBayesController::class, 'deviasi']);

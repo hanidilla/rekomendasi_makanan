@@ -10,4 +10,9 @@ class FaktorAktivitas extends Model
     use HasFactory;
 
     protected $table = 'faktor_aktivitas';
+
+    protected $fillable = [
+        'nama',
+        'presentase'
+    ];
 }

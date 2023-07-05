@@ -10,4 +10,9 @@ class FaktorStress extends Model
     use HasFactory;
 
     protected $table = 'faktor_stress';
+
+    protected $fillable = [
+        'nama',
+        'presentase'
+    ];
 }

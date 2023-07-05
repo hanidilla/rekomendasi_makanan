@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\BahanMakanan;
+use App\Models\Probabilitas;
 use App\Traits\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -168,13 +169,19 @@ class NaiveBayesController extends Controller
         // dd(\stats_dens_normal);
         foreach ($mean as $k => $v) {
             // dd($k);
-            $normalProt = new Continuous\Normal($v["protein"], $stdev[$k]["protein"]);
-            $normalKarbo = new Continuous\Normal($v["karbohidrat"], $stdev[$k]["karbohidrat"]);
-            $normalLemak = new Continuous\Normal($v["lemak"], $stdev[$k]["lemak"]);
-            $dataNormal[$k] =  ["protein" =>  $normalProt->pdf($protein), "lemak" =>  $normalLemak->pdf($lemak), "karbohidrat" =>  $normalKarbo->pdf($karbo)];
+            // $normalProt = new Continuous\Normal($v["protein"], $stdev[$k]["protein"]);
+            // $normalKarbo = new Continuous\Normal($v["karbohidrat"], $stdev[$k]["karbohidrat"]);
+            // $normalLemak = new Continuous\Normal($v["lemak"], $stdev[$k]["lemak"]);
+            $dataNormal[$k] =  ["protein" =>  $this->distNorm($protein, $v["protein"], $stdev[$k]["protein"]), "lemak" =>  $this->distNorm($lemak, $v["lemak"], $stdev[$k]["lemak"]), "karbohidrat" =>  $this->distNorm($karbo, $v["karbohidrat"], $stdev[$k]["karbohidrat"])];
         }
         // return $this->success($dataNormal, "Sukses");
         return $dataNormal;
+    }
+
+    public function distNorm($x, $mean, $sd)
+    {
+        $prob = (pi() * $sd) * exp(-0.5 * (($x - $mean) / $sd) ** 2);
+        return $prob;
     }
 
     public function naiveBayes($payload)
@@ -189,5 +196,33 @@ class NaiveBayesController extends Controller
             $res[$key] =  $value["protein"] * $value["lemak"] * $value["karbohidrat"] * (float)$prob[$key];
         }
         return $res;
+    }
+
+
+    public function getRes()
+    {
+        $data = Probabilitas::with('gizi.pasien')->get();
+        $dataRet = [];
+        $listId = [];
+        foreach ($data as $key => $value) {
+            if ($dataRet == null || !in_array($value["kebutuhan_gizi_id"], $listId)) {
+                # code...
+                array_push($listId, $value["kebutuhan_gizi_id"]);
+                $dataPush = [
+                    "nama" => $value["gizi"]["pasien"]["nama"],
+                    "gizi" => Probabilitas::where("kebutuhan_gizi_id", $value["kebutuhan_gizi_id"])->get()
+                ];
+
+                array_push($dataRet, $dataPush);
+            } else if (!in_array($value["kebutuhan_gizi_id"], $listId)) {
+                $dataPush = [
+                    "nama" => $value["gizi"]["pasien"]["nama"],
+                    "gizi" => Probabilitas::where("kebutuhan_gizi_id", $value["kebutuhan_gizi_id"])->get()
+                ];
+
+                array_push($dataRet, $dataPush);
+            }
+        }
+        return $this->success($dataRet, "");
     }
 }
