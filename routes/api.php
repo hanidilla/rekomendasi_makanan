@@ -29,6 +29,9 @@ Route::get('/all-factor', [FaktorController::class, 'getAllFactor']);
 Route::prefix('bahan-makanan')->group(function () {
     Route::get("/", [BahanMakananController::class, 'index']);
     Route::post('/', [BahanMakananController::class, 'store']);
+    Route::get("/{id}", [BahanMakananController::class, 'show']);
+    Route::put("/{id}", [BahanMakananController::class, 'update']);
+    Route::delete("/{id}", [BahanMakananController::class, 'destroy']);
 });
 
 

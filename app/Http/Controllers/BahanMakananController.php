@@ -25,6 +25,17 @@ class BahanMakananController extends Controller
         }
     }
 
+    public function show($id)
+    {
+        try {
+            $data = BahanMakanan::find($id);
+            return $this->success($data, "Data berhasil diambil");
+        } catch (\Throwable $th) {
+            //throw $th;
+            return $this->error($th->getMessage(), $th->getCode());
+        }
+    }
+
     public function store(Request $request)
     {
         try {
@@ -64,7 +75,7 @@ class BahanMakananController extends Controller
         }
     }
 
-    public function delete($id)
+    public function destroy($id)
     {
         try {
             DB::beginTransaction();
