@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="d-sm-flex align-items-center justify-content-between mb-4">
-    <h1 class="h3 mb-0 text-gray-800">Probabilitas</h1>
+    <h1 class="h3 mb-0 text-gray-800">Saran Makanan</h1>
 
 </div>
 <div class="card border-0 shadow">
@@ -12,10 +12,9 @@
                 <thead>
                     <tr>
                         <th>No</th>
-                        <th>Nama</th>
-                        <th>Protein (gr)</th>
-                        <th>Lemak (gr)</th>
-                        <th>Karbohidrat (gr)</th>
+                        <th>Kebutuhan Gizi ID</th>
+                        <th>Saran Makanan</th>
+
                     </tr>
                 </thead>
                 <tbody>
@@ -48,20 +47,16 @@
                 { data: 'id', name: 'DT_RowIndex' ,render: function (data, type, row, meta) {
                                 return meta.row + meta.settings._iDisplayStart + 1;
                             }},
-                { data: 'nama', name: 'nama' },
-                { data: 'gizi', name: 'protein',
+                { data: 'pasien.id', name: 'nama' },
+                { data: 'saran_makanan', name: 'protein',
                     render : function (data,type,row) {
-                        return data[1]["probabilitas"]
-                } },
-                { data: 'gizi', name: 'lemak',
-                    render : function (data,type,row) {
-                        return data[2]["probabilitas"]
-                }  },
-
-                { data: 'gizi', name: 'karbohidrat',
-                    render : function (data,type,row) {
-                        return data[0]["probabilitas"]
-                }  },
+                        var ret = ''
+                        data.forEach(el => {
+                            ret += `<li>${el.bahan_makanan}</li>`
+                        });
+                        return ret
+                    }
+                }
             ]
         });
     })

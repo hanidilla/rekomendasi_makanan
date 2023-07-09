@@ -65,7 +65,8 @@ Route::prefix("faktor")->group(function () {
 });
 Route::prefix("nv-bayes")->group(function () {
     Route::get("/", [NaiveBayesController::class, 'naiveBayes']);
-    Route::get("/get-data", [NaiveBayesController::class, 'getRes']);
+    Route::get("/nvb", [NaiveBayesController::class, 'nvBayes']);
+    Route::get("/get-data", [NaiveBayesController::class, 'getSaran']);
     Route::get("/probability", [NaiveBayesController::class, 'probability']);
     Route::get("/mean", [NaiveBayesController::class, 'mean']);
     Route::get("/stdev", [NaiveBayesController::class, 'deviasi']);

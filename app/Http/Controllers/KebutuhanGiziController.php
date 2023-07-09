@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\NaiveBayesController as NVB;
 use App\Models\Probabilitas;
+use App\Models\SaranMakanan;
 
 class KebutuhanGiziController extends Controller
 {
@@ -48,15 +49,20 @@ class KebutuhanGiziController extends Controller
                 "lemak" => $data["lemak"],
                 "karbohidrat" => $data["karbohidrat"]
             ];
-            $res = $nvb->naiveBayes($payload);
-            foreach ($res as $key => $value) {
-                # code...
-                Probabilitas::create([
-                    "kebutuhan_gizi_id" => $kebutuhanGizi["id"],
-                    "probabilitas" =>  $value,
-                    "kategori_makanan" => $key
-                ]);
-            }
+            $res = $nvb->nvBayes($payload);
+            // dd(json_encode($res), $data);
+            // foreach ($res as $key => $value) {
+            # code...
+            // Probabilitas::create([
+            //     "kebutuhan_gizi_id" => $kebutuhanGizi["id"],
+            //     "probabilitas" =>  $value,
+            //     "kategori_makanan" => $key
+            // ]);
+            SaranMakanan::create([
+                "kebutuhan_gizi_id" => $kebutuhanGizi["id"],
+                "saran_makanan" => json_encode($res)
+            ]);
+            // }
 
             DB::commit();
             return $this->success($kebutuhanGizi, 'Kebutuhan Gizi Berhasil Dibuat');
