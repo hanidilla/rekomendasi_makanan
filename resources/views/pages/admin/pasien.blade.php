@@ -20,8 +20,8 @@
                             <th>Nama</th>
                             <th>Umur</th>
                             <th>Jenis Kelamin</th>
-                            <th>Tinggi Badan</th>
-                            <th>Berat Badan</th>
+                            <th>Tinggi Badan (Meter)</th>
+                            <th>Berat Badan (Kg)</th>
                             <th>Aksi</th>
                         </tr>
                     </thead>
