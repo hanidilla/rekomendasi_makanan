@@ -219,19 +219,25 @@ class NaiveBayesController extends Controller
                 if ($jmlKarbo + $value->karbohidrat <= $payload['karbohidrat']) {
                     array_push($makanan, $value->id);
                     $jmlKarbo += $value->karbohidrat;
+                    $jmlLemak += $value->lemak;
+                    $jmlProtein += $value->protein;
                 }
             }
 
             if ($value->kandungan_makanan == "lemak") {
                 if ($jmlLemak + $value->lemak  <= $payload['lemak']) {
                     array_push($makanan, $value->id);
+                    $jmlKarbo += $value->karbohidrat;
                     $jmlLemak += $value->lemak;
+                    $jmlProtein += $value->protein;
                 }
             }
 
             if ($value->kandungan_makanan == "protein") {
                 if ($jmlProtein + $value->protein <= $payload['protein']) {
                     array_push($makanan, $value->id);
+                    $jmlKarbo += $value->karbohidrat;
+                    $jmlLemak += $value->lemak;
                     $jmlProtein += $value->protein;
                 }
             }

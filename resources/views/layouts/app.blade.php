@@ -20,6 +20,7 @@
     <!-- Custom styles for this template-->
     <link href="{{asset('css/sb-admin-2.css')}}" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js"></script>
     {{-- <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> --}}
 </head>
 
@@ -317,6 +318,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
+         var curCookie = Cookies.get('admin_cookie') ?? Cookies.get('pasien_cookie');
         function alertSuccess(msg) {
             Swal.fire({
                 icon: 'success',
@@ -333,7 +335,7 @@
                 icon: 'error',
                 title: 'Gagal',
                 text: data,
-                showConfirmButton : false,
+            showConfirmButton : false,
                 timer: 2000,
                 timerProgressBar: true,
             })

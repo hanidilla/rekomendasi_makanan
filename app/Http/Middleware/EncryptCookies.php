@@ -13,5 +13,7 @@ class EncryptCookies extends Middleware
      */
     protected $except = [
         //
+        'admin_cookie',
+        'pasien_cookie'
     ];
 }

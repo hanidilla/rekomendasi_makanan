@@ -52,7 +52,7 @@
                     render : function (data,type,row) {
                         var ret = ''
                         data.forEach(el => {
-                            ret += `<li>${el.bahan_makanan}</li>`
+                            ret += `${el.bahan_makanan}, `
                         });
                         return ret
                     }

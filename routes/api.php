@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BahanMakananController;
 use App\Http\Controllers\FaktorController;
 use App\Http\Controllers\KebutuhanGiziController;
@@ -23,6 +24,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+
+Route::post("/login", [AuthController::class, "login"]);
 
 Route::get('/all-factor', [FaktorController::class, 'getAllFactor']);
 

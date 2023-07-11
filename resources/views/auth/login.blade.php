@@ -5,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js"></script>
 </head>
 <body style="height: 100vh">
 
@@ -19,15 +20,15 @@
                 <div class="card-body">
                     <div class="form-group">
                         <label for="">Email</label>
-                        <input type="email" class="form-control form-control-sm">
+                        <input type="email" id="email" class="form-control form-control-sm">
                         <label for="">Password</label>
-                        <input type="password" class="form-control form-control-sm">
+                        <input type="password" id="password" class="form-control form-control-sm">
 
                         {{-- <div class="text-right"> --}}
 
-                            <a href="/" class="btn btn-sm btn-primary mt-3 " style="width: 100% ">
+                            <button class="btn btn-sm btn-primary mt-3 " id="btn-login" style="width: 100% ">
                                 Login
-                            </a>
+                            </button>
                         {{-- </div> --}}
                     </div>
                 </div>
@@ -37,8 +38,31 @@
     </div>
 
 
-    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js"  crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"  crossorigin="anonymous"></script>
 
+
+    <script>
+        $("#btn-login").click(function(){
+            let email = $("#email").val()
+            let password = $("#password").val()
+
+            $.ajax({
+                url: "/api/login",
+                type: "POST",
+                data: {
+                    email: email,
+                    password: password
+                },
+                success: function(res){
+                   console.log(res);
+                   Cookies.set('admin_cookie', res.data.token)
+                    setTimeout(() => {
+                            location.href = '/'
+                        }, 2000);
+                }
+            })
+        })
+    </script>
 </body>
 </html>
