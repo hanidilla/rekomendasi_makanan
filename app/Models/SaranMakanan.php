@@ -13,7 +13,7 @@ class SaranMakanan extends Model
 
     protected $fillable = [
         'kebutuhan_gizi_id',
-        'saran_makanan'
+        'data',
     ];
 
     /**

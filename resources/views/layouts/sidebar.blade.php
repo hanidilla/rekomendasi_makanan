@@ -17,6 +17,21 @@
             <i class="fas fa-fw fa-tachometer-alt"></i>
             <span>Dashboard</span></a>
     </li>
+    <li class="nav-item active">
+        <a class="nav-link" href="/">
+            <i class="fa fa-bacon"></i>
+            <span>Bahan Makanan</span></a>
+    </li>
+        <li class="nav-item">
+        <a class="nav-link" href="/faktor-aktivitas">
+            <i class="fas fa-fw fa-hiking"></i>
+            <span>Faktor Aktivitas</span></a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="/faktor-stress">
+            <i class="fas fa-fw fa-angry"></i>
+            <span>Faktor Stress</span></a>
+    </li>
     <li class="nav-item">
         <a class="nav-link" href="/pasien">
             <i class="fas fa-fw fa-user"></i>
@@ -32,16 +47,7 @@
             <i class="fas fa-fw fa-user"></i>
             <span>Probabilitas</span></a>
     </li>
-    <li class="nav-item">
-        <a class="nav-link" href="/faktor-aktivitas">
-            <i class="fas fa-fw fa-hiking"></i>
-            <span>Faktor Aktivitas</span></a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" href="/faktor-stress">
-            <i class="fas fa-fw fa-angry"></i>
-            <span>Faktor Stress</span></a>
-    </li>
+
 
 
 </ul>

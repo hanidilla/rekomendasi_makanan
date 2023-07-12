@@ -1,68 +1,81 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+    <title>Login V9</title>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="icon" type="image/png" href="images/icons/favicon.ico" />
+
+    <link rel="stylesheet" type="text/css" href="user_login_form/bootstrap.min.css">
+
+    <link rel="stylesheet" type="text/css" href="user_login_form/font-awesome.min.css">
+
+    <link rel="stylesheet" type="text/css" href="user_login_form/material-design-iconic-font.min.css">
+
+    <link rel="stylesheet" type="text/css" href="user_login_form/animate.css">
+
+    <link rel="stylesheet" type="text/css" href="user_login_form/hamburgers.min.css">
+
+    <link rel="stylesheet" type="text/css" href="user_login_form/animsition.min.css">
+
+    <link rel="stylesheet" type="text/css" href="user_login_form/select2.min.css">
+
+    <link rel="stylesheet" type="text/css" href="user_login_form/daterangepicker.css">
+
+    <link rel="stylesheet" type="text/css" href="user_login_form/util.css">
+    <link rel="stylesheet" type="text/css" href="user_login_form/main.css">
+
+    <meta name="robots" content="noindex, follow">
 </head>
-<body style="height: 100vh">
 
-    <div class="row d-flex h-100" >
-        <div class="col-md-7" style="background-image: linear-gradient(180deg,  rgba(143, 143, 143, 0.378) 0 40%,rgba(255, 218, 117, 0.449) 60% 100%), url('https://images.unsplash.com/photo-1555243896-c709bfa0b564?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1770&q=80'); background-size: cover; background-repeat: no-repeat">
-            {{-- <h3>Perbaiki Gizi</h3> --}}
-        </div>
-        <div class="col-md-4 mx-auto my-auto">
-            <h3>SignIn</h3>
-            <div class="card border-0 shadow">
-                <div class="card-body">
-                    <div class="form-group">
-                        <label for="">Email</label>
-                        <input type="email" id="email" class="form-control form-control-sm">
-                        <label for="">Password</label>
-                        <input type="password" id="password" class="form-control form-control-sm">
+<body>
+    <div class="container-login100" style="background-image: url('user_login_form/bg-01.jpg');">
 
-                        {{-- <div class="text-right"> --}}
-
-                            <button class="btn btn-sm btn-primary mt-3 " id="btn-login" style="width: 100% ">
-                                Login
-                            </button>
-                        {{-- </div> --}}
-                    </div>
+        <div class="wrap-login100 p-l-55 p-r-55 p-t-80 p-b-30">
+           <h5 align="center"  style="padding-bottom: 20px">Sistem Informasi Rekomendasi Makanan</h5>
+            <form class="login100-form validate-form" action="{{url('login_user_gizi')}}" method="POST">
+                @csrf
+               <p align="center" style="padding-bottom: 20px">Silahkan Masukkan Email & Password Yang Terdaftar</p>
+                 @if($message = Session::get('error'))
+                    <p align="center" style="color: red"><strong>{{$message}}</strong></p>
+                @endif
+                <div class="wrap-input100 validate-input m-b-20" data-validate="Masukkan Email">
+                    <input class="input100" type="text" name="email" placeholder="Masukkan Email">
+                    <span class="focus-input100"></span>
                 </div>
-            </div>
-
+                <div class="wrap-input100 validate-input m-b-25" data-validate="Masukkan Password">
+                    <input class="input100" type="password" name="password" placeholder="password">
+                    <span class="focus-input100"></span>
+                </div>
+                <div class="container-login100-form-btn">
+                    <button class="login100-form-btn" type="submit">
+                        Masuk
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
+    <div id="dropDownSelect1"></div>
+
+    <script src="user_login_form/jquery-3.2.1.min.js"></script>
+
+    <script src="user_login_form/animsition.min.js"></script>
+
+    <script src="user_login_form/popper.js"></script>
+    <script src="user_login_form/bootstrap.min.js"></script>
+
+    <script src="user_login_form/select2.min.js"></script>
+
+    <script src="user_login_form/moment.min.js"></script>
+    <script src="user_login_form/daterangepicker.js"></script>
+
+    <script src="user_login_form/countdowntime.js"></script>
+
+    <script src="user_login_form/main.js"></script>
 
 
-    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js"  crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"  crossorigin="anonymous"></script>
-
-
-    <script>
-        $("#btn-login").click(function(){
-            let email = $("#email").val()
-            let password = $("#password").val()
-
-            $.ajax({
-                url: "/api/login",
-                type: "POST",
-                data: {
-                    email: email,
-                    password: password
-                },
-                success: function(res){
-                   console.log(res);
-                   Cookies.set('admin_cookie', res.data.token)
-                    setTimeout(() => {
-                            location.href = '/'
-                        }, 2000);
-                }
-            })
-        })
-    </script>
 </body>
+
 </html>

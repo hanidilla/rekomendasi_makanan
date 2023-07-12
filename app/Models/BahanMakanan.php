@@ -18,6 +18,7 @@ class BahanMakanan extends Model
         'protein',
         'lemak',
         'karbohidrat',
-        'kandungan_makanan'
+        'kandungan_makanan',
+        'type'
     ];
 }

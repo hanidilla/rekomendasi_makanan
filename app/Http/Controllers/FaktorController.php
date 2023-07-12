@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\DB;
 
 class FaktorController extends Controller
 {
+    
     use Response;
     //
 

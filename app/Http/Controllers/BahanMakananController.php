@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\DB;
 
 class BahanMakananController extends Controller
 {
+
+    
     //
     use Response;
 
@@ -17,7 +19,10 @@ class BahanMakananController extends Controller
         try {
 
             $data = BahanMakanan::all();
-
+            $data = json_decode(json_encode($data),true);
+            foreach ($data as $key => $value) {
+                $data[$key]['type'] = ucwords(str_replace('_', ' ', $data[$key]['type']));
+            }
             return $this->success($data, 'Data Makanan Berhasil Diambil');
         } catch (\Throwable $th) {
             //throw $th;
@@ -29,6 +34,7 @@ class BahanMakananController extends Controller
     {
         try {
             $data = BahanMakanan::find($id);
+
             return $this->success($data, "Data berhasil diambil");
         } catch (\Throwable $th) {
             //throw $th;

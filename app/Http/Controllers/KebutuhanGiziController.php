@@ -10,9 +10,11 @@ use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\NaiveBayesController as NVB;
 use App\Models\Probabilitas;
 use App\Models\SaranMakanan;
+use App\Models\Pasien;
 
 class KebutuhanGiziController extends Controller
 {
+    
     use Response;
     //
 
@@ -20,55 +22,51 @@ class KebutuhanGiziController extends Controller
     {
         try {
             $kebutuhanGizi = KebutuhanGizi::with('pasien')->get();
-            // dd($kebutuhanGizi);
             return $this->success($kebutuhanGizi, 'Berhasil Mendapatkan Semua Kebutuhan Gizi');
-            //code...
         } catch (\Throwable $th) {
-            //throw $th;
             return $this->error($th->getMessage(), 500);
         }
     }
 
     public function store(Request $request)
     {
-        # code...
         try {
             DB::beginTransaction();
             $data = $request->all();
-            // $data['user_id'] = auth()->user()->id;
-            $data['user_id'] = $request->user_id;
-            $data['kalori'] = number_format($this->calKalori($data, $request->stress_fac, $request->activity_fac, $this->ageCor($request->umur)), 2, '.', '');
-            $data['protein'] = number_format($this->calProtein($data, $request->stress_fac, $request->activity_fac, $this->ageCor($request->umur)), 2, '.', '');
-            $data['lemak'] = number_format($this->calLemak($data, $request->stress_fac, $request->activity_fac, $this->ageCor($request->umur)), 2, '.', '');
-            $data['karbohidrat'] = number_format($this->calKarbohidrat($data, $request->stress_fac, $request->activity_fac, $this->ageCor($request->umur)), 2, '.', '');
 
-            $kebutuhanGizi = KebutuhanGizi::create($data);
+            $pasien = Pasien::where('id',$request->user_id)->first();
+
+            $data['jenis_kelamin'] = $pasien->jenis_kelamin;
+            $data['user_id'] = $request->user_id;
+
+            $kalori = $this->calKalori($data, $request->stress_fac, $request->activity_fac, $this->ageCor($request->umur));
+            $data['kalori'] = number_format($kalori, 2, '.', '');
+
+            $protein = $this->calProtein($data, $request->stress_fac, $request->activity_fac, $this->ageCor($request->umur));
+            $data['protein'] = number_format($protein, 2, '.', '');
+
+            $lemak = $this->calLemak($data, $request->stress_fac, $request->activity_fac, $this->ageCor($request->umur));
+            $data['lemak'] = number_format($lemak, 2, '.', '');
+
+            $karbohidrat = $this->calKarbohidrat($data, $request->stress_fac, $request->activity_fac, $this->ageCor($request->umur));
+            $data['karbohidrat'] = number_format($karbohidrat, 2, '.', '');
+
             $nvb = new NVB();
             $payload = [
                 "protein" => $data["protein"],
                 "lemak" => $data["lemak"],
                 "karbohidrat" => $data["karbohidrat"]
             ];
+
             $res = $nvb->nvBayes($payload);
-            // dd(json_encode($res), $data);
-            // foreach ($res as $key => $value) {
-            # code...
-            // Probabilitas::create([
-            //     "kebutuhan_gizi_id" => $kebutuhanGizi["id"],
-            //     "probabilitas" =>  $value,
-            //     "kategori_makanan" => $key
-            // ]);
+            $kebutuhanGizi = KebutuhanGizi::create($data);
             SaranMakanan::create([
                 "kebutuhan_gizi_id" => $kebutuhanGizi["id"],
-                "saran_makanan" => json_encode($res)
+                "data" => json_encode($res),
             ]);
-            // }
-
             DB::commit();
             return $this->success($kebutuhanGizi, 'Kebutuhan Gizi Berhasil Dibuat');
-            //code...
         } catch (\Throwable $th) {
-            //throw $th;
             DB::rollback();
             return $this->error($th->getMessage(), 500);
         }
@@ -100,13 +98,24 @@ class KebutuhanGiziController extends Controller
     }
     public function calIdealWB($data)
     {
-        return sqrt(($data['tinggi'] / 100)) * 22.5;
+        if($data['jenis_kelamin'] == 'laki-laki')
+        {
+            return sqrt(($data['tinggi'] / 100)) * 22.5; // laki laki
+        }else
+        {
+            return sqrt(($data['tinggi'] / 100)) * 21; // perempuan
+        } 
     }
 
     public function calBasal($data)
     {
-        # code...
-        return $this->calIdealWB($data) * 30;
+        if($data['jenis_kelamin'] == 'laki-laki')
+        {
+            return $this->calIdealWB($data) * 30; // laki laki
+        }else
+        {
+            return $this->calIdealWB($data) * 25; // perempuan
+        }
     }
 
     public function calKalori($data, $stress_fac, $activity_fac, $age)

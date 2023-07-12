@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 
 class PasienController extends Controller
 {
+    
     //
     use Response;
     public function index()

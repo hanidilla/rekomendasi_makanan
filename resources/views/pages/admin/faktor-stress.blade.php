@@ -17,7 +17,7 @@
                             <th>No</th>
                             <th>Nama</th>
                             <th>Presentase</th>
-                            <th>Aksi</th>
+                            <th style="display: none">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -88,8 +88,7 @@
                 ,{
                     data : 'id',
                     render : function (data) {
-                        return `<button class="btn btn-sm btn-warning btn-edit-stress" data-id=${data}><i class="fas fa-pencil-alt"></i></button>
-                                <button class="btn btn-sm btn-danger btn-delete-stress" data-id=${data}><i class="fas fa-trash"></i></button>`
+                        return ``
                     }
                 }
             ]

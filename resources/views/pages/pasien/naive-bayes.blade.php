@@ -12,13 +12,69 @@
                 <thead>
                     <tr>
                         <th>No</th>
-                        <th>Kebutuhan Gizi ID</th>
+                        <th>Nama Pasien</th>
+                        <th>Detail</th>
                         <th>Saran Makanan</th>
-
                     </tr>
                 </thead>
                 <tbody>
-
+                    @foreach($dataRet as $key => $item)
+                        <tr>
+                            <td>{{$key+1}}</td>
+                            <td>{{$item['nama_pasien']}}</td>
+                            <td>
+                                <ul>
+                                    <u>Pasien</u>
+                                    <li>
+                                        <b>Umur</b> : {{$item['umur']}}
+                                    </li>
+                                    <li>
+                                        <b>Tinggi</b> : {{$item['tinggi']}}
+                                    </li>
+                                    <li>
+                                        <b>Berat</b> : {{$item['berat']}}
+                                    </li>
+                                    <li>
+                                        <b>Jenis Kelamin</b> : {{$item['jenis_kelamin']}}
+                                    </li>
+                                    <li>
+                                        <b>Faktor Aktifitas</b> : {{$item['activity_fac']}}
+                                    </li>
+                                    <li>
+                                        <b>Faktor Stress</b> : {{$item['stress_fac']}}
+                                    </li>
+                                </ul>
+                                <ul>
+                                    <u>Kebutuhan</u>
+                                    <li>
+                                        <b>Kalori</b> : {{$item['kalori']}}
+                                    </li>
+                                    <li>
+                                        <b>Protein</b> : {{$item['protein']}}
+                                    </li>
+                                    <li>
+                                        <b>Lemak</b> : {{$item['lemak']}}
+                                    </li>
+                                    <li>
+                                        <b>Karbohidrat</b> : {{$item['karbohidrat']}}
+                                    </li>
+                                </ul>
+                            </td>
+                            <td>
+                                @foreach($item['data'] as $dataKey => $dataItem)
+                                <ul> <u>{{$dataKey}}</u>
+                                    
+                                       @foreach($dataItem as $childKey => $childItem)
+                                        <li>
+                                            <b>{{ucwords(str_replace('_',' ',$childKey))}}</b> : {{$childItem}}
+                                        </li>
+                                       @endforeach
+                                    
+                                </ul>
+                                @endforeach
+                            </td>
+                        </tr>
+                    @endforeach
                 </tbody>
             </table>
         </div>
@@ -30,7 +86,7 @@
 
 @section('script')
 
-<script>
+<!-- <script>
     $(document).ready(function () {
         $.ajax({
             url : "/api/nv-bayes/get-data",
@@ -60,6 +116,6 @@
             ]
         });
     })
-</script>
+</script> -->
 
 @endsection

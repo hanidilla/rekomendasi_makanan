@@ -21,6 +21,7 @@
                             <th>Protein (gr)</th>
                             <th>Lemak (gr)</th>
                             <th>Karbohidrat (gr)</th>
+                            <th>Type</th>
                             <th>Aksi</th>
                         </tr>
                     </thead>
@@ -57,6 +58,26 @@
             <label for="">Karbohidrat</label>
             <input type="number" class="form-control form-control-sm" id="karbohidrat">
         </div>
+         <div class="form-group">
+            <label for="">Tipe</label>
+           <select class="form-control form-control-sm" id="tipe">
+               <option value="makanan_pokok">
+                   Makanan Pokok
+               </option>
+               <option value="makanan_pendamping">
+                   Makanan Pendamping
+               </option>
+               <option value="lauk_pauk">
+                   Lauk Pauk
+               </option>
+               <option value="buah">
+                   Buah
+               </option>
+               <option value="sayur">
+                   Sayur
+               </option>
+           </select>
+        </div>
 
         <div class="d-flex justify-content-end">
             <button class="btn btn-sm btn-secondary close-modal">Tutup</button>&nbsp;
@@ -90,7 +111,26 @@
             <label for="">Karbohidrat</label>
             <input type="number" class="form-control form-control-sm" id="karbohidrat-edit">
         </div>
-
+        <div class="form-group">
+            <label for="">Tipe</label>
+           <select class="form-control form-control-sm" id="tipe-edit">
+               <option value="makanan_pokok" id="makanan_pokok">
+                   Makanan Pokok
+               </option>
+               <option value="makanan_pendamping" id="makanan_pendamping">
+                   Makanan Pendamping
+               </option>
+               <option value="lauk_pauk" id="lauk_pauk">
+                   Lauk Pauk
+               </option>
+               <option value="buah" id="buah">
+                   Buah
+               </option>
+               <option value="sayur" id="sayur">
+                   Sayur
+               </option>
+           </select>
+        </div>
         <div class="d-flex justify-content-end">
             <button class="btn btn-sm btn-secondary close-modal">Tutup</button>&nbsp;
             <button class="btn btn-sm btn-primary" id="btn-update-bahan">Simpan</button>
@@ -127,6 +167,8 @@
                 },{
                     data : 'karbohidrat'
                 },{
+                    data : 'type'
+                },{
                     data : 'id',
                     render : function (data) {
                         return `<button class="btn btn-sm btn-warning btn-edit-bahan" data-id=${data}><i class="fas fa-pencil-alt"></i></button>
@@ -151,7 +193,8 @@
                     energi : $('#energi').val(),
                     protein: $('#protein').val(),
                     lemak : $('#lemak').val(),
-                    karbohidrat : $('#karbohidrat').val()
+                    karbohidrat : $('#karbohidrat').val(),
+                    type : $('#type').val()
                 },
                 success : function (data) {
                     console.log(data);
@@ -180,7 +223,8 @@
                     $('#protein-edit').val(data.protein)
                     $('#lemak-edit').val(data.lemak)
                     $('#karbohidrat-edit').val(data.karbohidrat)
-
+                   // var type_nya = data.type;
+                    $('#tipe-edit option').removeAttr('selected').filter('[value=' + data.type + ']').attr('selected', true);
                 }
             })
         })
@@ -197,7 +241,8 @@
                     energi : $('#energi-edit').val(),
                     protein: $('#protein-edit').val(),
                     lemak : $('#lemak-edit').val(),
-                    karbohidrat : $('#karbohidrat-edit').val()
+                    karbohidrat : $('#karbohidrat-edit').val(),
+                    type : $('#tipe-edit').val()
                 },
                 success : function (data) {
                     alertSuccess('Data berhasil diupdate')
