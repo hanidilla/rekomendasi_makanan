@@ -167,15 +167,9 @@ class NaiveBayesController extends Controller
         $mean = $this->mean();
         $stdev = $this->deviasi();
         $dataNormal = [];
-        // dd(\stats_dens_normal);
         foreach ($mean as $k => $v) {
-            // dd($k);
-            // $normalProt = new Continuous\Normal($v["protein"], $stdev[$k]["protein"]);
-            // $normalKarbo = new Continuous\Normal($v["karbohidrat"], $stdev[$k]["karbohidrat"]);
-            // $normalLemak = new Continuous\Normal($v["lemak"], $stdev[$k]["lemak"]);
             $dataNormal[$k] = ["protein" => $this->distNorm($protein, $v["protein"], $stdev[$k]["protein"]), "lemak" => $this->distNorm($lemak, $v["lemak"], $stdev[$k]["lemak"]), "karbohidrat" => $this->distNorm($karbo, $v["karbohidrat"], $stdev[$k]["karbohidrat"])];
         }
-        // return $this->success($dataNormal, "Sukses");
         return $dataNormal;
     }
 
@@ -188,12 +182,9 @@ class NaiveBayesController extends Controller
     public function naiveBayes($payload)
     {
         $prob = $this->probability();
-        // dd($prob);
-        // $dataNorm = $this->normalDist();
         $dataNorm = $this->normalDist($payload['karbohidrat'], $payload['protein'], $payload['lemak']);
         $res = [];
         foreach ($dataNorm as $key => $value) {
-            // dd($value["protein"] * $value["lemak"] * $value["karbohidrat"]);
             $res[$key] = $value["protein"] * $value["lemak"] * $value["karbohidrat"] * (float) $prob[$key];
         }
         return $res;
@@ -206,130 +197,115 @@ class NaiveBayesController extends Controller
         $dataLemak = DB::select('SELECT * FROM bahan_makanan WHERE kandungan_makanan = "lemak"');
         $dataProtein = DB::select('SELECT * FROM bahan_makanan WHERE kandungan_makanan = "protein"');
 
-        $dataMakanan = DB::select('SELECT * FROM bahan_makanan');
+        // $dataMakanan = DB::select('SELECT * FROM bahan_makanan');
 
-        $makanan = [];
+        // $makanan = json_decode(json_encode($dataMakanan),true);
         $jmlKarbo = 0;
         $jmlLemak = 0;
         $jmlProtein = 0;
         $keyKarbo = -1;
         $keyProtein = -1;
         $keyLemak = -1;
-        foreach ($dataMakanan as $key => $value) {
-            if ($value->kandungan_makanan == "karbohidrat") {
-                if ($jmlKarbo + $value->karbohidrat <= $payload['karbohidrat']) {
-                    $jmlKarbo += $value->karbohidrat;
-                    $jmlLemak += $value->lemak;
-                    $jmlProtein += $value->protein;
-                    $keyKarbo++;
+        $kadungan = ['karbohidrat','lemak','protein'];
+        $kadunganBagi = ['karbohidrat'=> 15 / 100,'lemak'=>65 / 100,'protein'=>35 / 100];
+        $saran = ['pagi','siang','malam'];
+        // foreach ($dataMakanan as $key => $value) {
+        //     if ($value->kandungan_makanan == "karbohidrat") {
+        //         if ($jmlKarbo + $value->karbohidrat <= $payload['karbohidrat']) {
+        //             $jmlKarbo += $value->karbohidrat;
+        //             $jmlLemak += $value->lemak;
+        //             $jmlProtein += $value->protein;
+        //             $keyKarbo++;
 
-                    $makanan['karbohidrat'][$keyKarbo]['id'] = $value->id;
-                    $makanan['karbohidrat'][$keyKarbo]['bobot'] = $value->karbohidrat;
-                    $makanan['karbohidrat'][$keyKarbo]['type'] = $value->type;
-                    $makanan['karbohidrat'][$keyKarbo]['bahan_makanan'] = $value->bahan_makanan;
-                }
-            }
+        //             $makanan['karbohidrat'][$keyKarbo]['id'] = $value->id;
+        //             $makanan['karbohidrat'][$keyKarbo]['bahan_makanan'] = $value->bahan_makanan;
+        //             $makanan['karbohidrat'][$keyKarbo]['berat'] = $value->berat;
+        //             $makanan['karbohidrat'][$keyKarbo]['energi'] = $value->energi;
+        //         }
+        //     }
 
-            if ($value->kandungan_makanan == "lemak") {
-                if ($jmlLemak + $value->lemak <= $payload['lemak']) {
-                    $jmlKarbo += $value->karbohidrat;
-                    $jmlLemak += $value->lemak;
-                    $jmlProtein += $value->protein;
-                    $keyLemak++;
+        //     if ($value->kandungan_makanan == "lemak") {
+        //         if ($jmlLemak + $value->lemak <= $payload['lemak']) {
+        //             $jmlKarbo += $value->karbohidrat;
+        //             $jmlLemak += $value->lemak;
+        //             $jmlProtein += $value->protein;
+        //             $keyLemak++;
 
-                    $makanan['lemak'][$keyLemak]['id'] = $value->id;
-                    $makanan['lemak'][$keyLemak]['bobot'] = $value->lemak;
-                    $makanan['lemak'][$keyLemak]['type'] = $value->type;
-                    $makanan['lemak'][$keyLemak]['bahan_makanan'] = $value->bahan_makanan;
-                }
-            }
+        //             $makanan['lemak'][$keyLemak]['id'] = $value->id;
+        //             $makanan['lemak'][$keyLemak]['bahan_makanan'] = $value->bahan_makanan;
+        //             $makanan['lemak'][$keyLemak]['berat'] = $value->berat;
+        //             $makanan['lemak'][$keyLemak]['energi'] = $value->energi;
+        //         }
+        //     }
 
-            if ($value->kandungan_makanan == "protein") {
-                if ($jmlProtein + $value->protein <= $payload['protein']) {
-                    $jmlKarbo += $value->karbohidrat;
-                    $jmlLemak += $value->lemak;
-                    $jmlProtein += $value->protein;
-                    $keyProtein++;
+        //     if ($value->kandungan_makanan == "protein") {
+        //         if ($jmlProtein + $value->protein <= $payload['protein']) {
+        //             $jmlKarbo += $value->karbohidrat;
+        //             $jmlLemak += $value->lemak;
+        //             $jmlProtein += $value->protein;
+        //             $keyProtein++;
 
-                    $makanan['protein'][$keyProtein]['id'] = $value->id;
-                    $makanan['protein'][$keyProtein]['bobot'] = $value->protein;
-                    $makanan['protein'][$keyProtein]['type'] = $value->type;
-                    $makanan['protein'][$keyProtein]['bahan_makanan'] = $value->bahan_makanan;
-                }
-            }
-        }
+        //             $makanan['protein'][$keyProtein]['id'] = $value->id;
+        //             $makanan['protein'][$keyProtein]['bahan_makanan'] = $value->bahan_makanan;
+        //             $makanan['protein'][$keyProtein]['berat'] = $value->berat;
+        //             $makanan['protein'][$keyProtein]['energi'] = $value->energi;
+        //         }
+        //     }
+        // }
 
-        $arrVal = ['karbohidrat'=>[],'protein'=>[],'lemak'=>[]];
-        $jenis = ['makanan_pokok','buah','sayur','lauk_pauk','makanan_pendamping'];
-        $noNya = -1;
-        foreach ($arrVal as $arrKey => $arrValue) 
+        $hari = [];
+        $hari['pagi']['data'] =  $payload['kalori'] * 20 / 100;
+        $hari['pagi']['protein'] =  $payload['protein'] * 15 / 100;
+        $hari['pagi']['karbohidrat'] =  $payload['karbohidrat'] * 65 / 100;
+        $hari['pagi']['lemak'] =  $payload['lemak'] * 35 / 100;
+
+        $hari['siang']['data'] = $payload['kalori'] * 30 / 100;
+        $hari['siang']['protein'] =  $payload['protein'] * 15 / 100;
+        $hari['siang']['karbohidrat'] =  $payload['karbohidrat'] * 65 / 100;
+        $hari['siang']['lemak'] =  $payload['lemak'] * 35 / 100;
+
+        $hari['malam']['data'] = $payload['kalori'] * 25 / 100;
+        $hari['malam']['protein'] =  $payload['protein'] * 15 / 100;
+        $hari['malam']['karbohidrat'] =  $payload['karbohidrat'] * 65 / 100;
+        $hari['malam']['lemak'] =  $payload['lemak'] * 35 / 100;
+        $arr = [];
+        foreach ($kadungan as $kadunganKey => $kadunganItem) 
         {
-            if(isset($makanan[$arrKey]))
-            {
-                foreach ($makanan[$arrKey] as $makananKey => $makananValue) 
+                $keyNumber = [];
+                $keyNumber['pagi'] =  0;
+                $keyNumber['siang'] = 0;
+                $keyNumber['malam'] = 0;
+                $energi = [];
+                $energi[$kadunganItem] = 0;
+                $validated = [];
+                foreach ($saran as $saranKey => $saranItem) 
                 {
-                    
-                    foreach ($jenis as $j => $jv) 
+                    $bobot = $hari[$saranItem][$kadunganItem];
+                    $dataMakanan = DB::table('bahan_makanan')->where('energi','<=',$bobot)
+                                   ->where('kandungan_makanan',$kadunganItem)
+                                   ->whereNotIn('id',$validated)
+                                   ->orderBy('energi','DESC')
+                                   ->groupBy('type')
+                                   ->get();
+                    $makanan = json_decode(json_encode($dataMakanan),true);
+                    foreach ($makanan as $makananKey => $makananItem) 
                     {
-                        if($makananValue['type'] == $jv)
+                        if($makananItem['energi'] <= $bobot)
                         {
-                            $noNya++;
-                            $arrVal[$arrKey][$jv][$noNya] = $makananValue['bobot'];
+                            array_push($validated, $makananItem['id']);
+                            $keyNumber[$saranItem]++;
+                            $berat = $makananItem['energi'] * $kadunganBagi[$kadunganItem];
+                            $arr[$saranItem][$keyNumber[$saranItem]]['makanan'] = $makananItem['bahan_makanan'];
+                            $arr[$saranItem][$keyNumber[$saranItem]]['berat'] = $berat;
+                            $arr[$saranItem][$keyNumber[$saranItem]]['kalori'] = $makananItem['energi'];
+                            $arr[$saranItem][$keyNumber[$saranItem]]['karbohidrat'] = $makananItem['karbohidrat'];
+                            $arr[$saranItem][$keyNumber[$saranItem]]['protein'] = $makananItem['protein'];
+                            $arr[$saranItem][$keyNumber[$saranItem]]['lemak'] = $makananItem['lemak'];
                         }
                     }
-                }
-            }
+               }
         }
-
-        $bobot = [];
-        $arrType = ['karbohidrat','protein','lemak'];
-        foreach ($arrType as $key => $value) 
-        {
-            foreach ($jenis as $j => $jv) 
-            {
-                if(isset($arrVal[$value][$jv]))
-                {
-                    $max = [];
-                    foreach ($arrVal[$value][$jv] as $i => $v) 
-                    {
-                        $max[$i] = $v;
-                    }
-                    $bobot[$value][$jv] = 0;
-                    if(count($max) > 0)
-                    {
-                        $bobot[$value][$jv] = max($max);
-                    }
-                }
-            }
-        }
-
-        $fixArr = [];
-        foreach ($arrType as $key => $value) 
-        {
-            if(isset($makanan[$value]))
-            {
-                foreach ($makanan[$value] as $i => $v) 
-                {
-                    foreach ($jenis as $j => $jv) 
-                    {
-                        if(isset($bobot[$value][$jv]))
-                        {
-                            if($bobot[$value][$jv] > 0)
-                            {
-                                if($v['type'] == $jv)
-                                {
-                                    if($v['bobot'] >= $bobot[$value][$jv])
-                                    {
-                                        $fixArr[$value][$jv] = $v['bahan_makanan'];
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        return $fixArr;
+        return $arr;
     }
 
     public function getRes()

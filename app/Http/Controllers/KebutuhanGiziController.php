@@ -55,10 +55,12 @@ class KebutuhanGiziController extends Controller
             $payload = [
                 "protein" => $data["protein"],
                 "lemak" => $data["lemak"],
-                "karbohidrat" => $data["karbohidrat"]
+                "karbohidrat" => $data["karbohidrat"],
+                "kalori"=>$data["kalori"]
             ];
 
             $res = $nvb->nvBayes($payload);
+            //dd($res);
             $kebutuhanGizi = KebutuhanGizi::create($data);
             SaranMakanan::create([
                 "kebutuhan_gizi_id" => $kebutuhanGizi["id"],

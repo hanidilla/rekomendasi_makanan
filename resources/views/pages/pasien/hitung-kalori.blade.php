@@ -2,9 +2,9 @@
 
 @section('content')
 <div class="d-sm-flex align-items-center justify-content-between mb-4">
-    <h1 class="h3 mb-0 text-gray-800">Bahan Makanan</h1>
+    <h1 class="h3 mb-0 text-gray-800">Hitung Kalori</h1>
     <button class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm" id="btn-add-gizi"><i
-            class="fas fa-plus fa-sm text-white-50"></i> Tambah Bahan</button>
+            class="fas fa-plus fa-sm text-white-50"></i> Tambah Hitungan</button>
 </div>
 
 <div class="card border-0 shadow">
