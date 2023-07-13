@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Pasien;
 use App\Traits\Response;
 use Illuminate\Http\Request;
-
+use DB;
 class PasienController extends Controller
 {
     
@@ -20,6 +20,8 @@ class PasienController extends Controller
     public function store(Request $request)
     {
         $data = $request->all();
+        $latest = DB::table('pasien')->count() + 1;
+        $data['kode'] = 'RKMDM'.$latest;
         $pasien = Pasien::create($data);
         return $this->success($pasien, 'Pasien Berhasil Dibuat');
     }

@@ -17,5 +17,6 @@ class Pasien extends Model
         'jenis_kelamin',
         'tinggi_badan',
         'berat_badan',
+        'kode',
     ];
 }

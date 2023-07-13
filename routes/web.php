@@ -13,7 +13,12 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
+// Route::get('/', function () {
+//     return view('pages.web.home');
+// });
+Route::get('/', [App\Http\Controllers\HomeController::class, 'web']);
+
+Route::get('/list-makanan', function () {
     return view('pages.admin.makanan');
 })->middleware("auth");
 

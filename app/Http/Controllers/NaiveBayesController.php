@@ -356,7 +356,6 @@ class NaiveBayesController extends Controller
             }
             $dataRet[$key]['created_at'] = Carbon::parse($dataRet[$key]['created_at'])->format('Y F d H:i:s');
         }
-        //dd($dataRet);
         return view('pages.pasien.naive-bayes',compact('dataRet'));
     }
 }

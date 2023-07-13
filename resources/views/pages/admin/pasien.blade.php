@@ -17,6 +17,7 @@
                     <thead>
                         <tr>
                             <th>No</th>
+                            <th>Kode</th>
                             <th>Nama</th>
                             <th>Umur</th>
                             <th>Jenis Kelamin</th>
@@ -113,6 +114,9 @@
             columns : [
                 {
                     data : 'id'
+                },
+                {
+                    data : 'kode'
                 },
                 {
                     data : 'nama'

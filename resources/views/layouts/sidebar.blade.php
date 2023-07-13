@@ -18,7 +18,7 @@
             <span>Dashboard</span></a>
     </li>
     <li class="nav-item active">
-        <a class="nav-link" href="/">
+        <a class="nav-link" href="/list-makanan">
             <i class="fa fa-bacon"></i>
             <span>Bahan Makanan</span></a>
     </li>
