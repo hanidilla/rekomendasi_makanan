@@ -45,7 +45,7 @@
     <li class="nav-item">
         <a class="nav-link" href="/nv-bayes">
             <i class="fas fa-fw fa-user"></i>
-            <span>Probabilitas</span></a>
+            <span>Saran makanan</span></a>
     </li>
 
 
