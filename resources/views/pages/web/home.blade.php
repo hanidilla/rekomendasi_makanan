@@ -83,7 +83,7 @@
             <div class="form-row ">
               <div class="form-group col-lg-12">
                 <label for="inputPatientName">Kode Pasien</label>
-                <input type="text" class="form-control" id="inputPatientName" name="kode_pasien" required placeholder="Contoh : RKMDM5652">
+                <input type="text" class="form-control" id="inputPatientName" name="kode_pasien" required placeholder="Contoh : RKMDM5652 atau RKMDM5-120230716" value="{{$request->kode_pasien}}">
                 @if ($ada != null)
                 	<br>
                 	<m style="color: red">{{$ada}}</m>

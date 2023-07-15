@@ -11,7 +11,7 @@ use App\Http\Controllers\NaiveBayesController as NVB;
 use App\Models\Probabilitas;
 use App\Models\SaranMakanan;
 use App\Models\Pasien;
-
+use Carbon\Carbon;
 class KebutuhanGiziController extends Controller
 {
     
@@ -51,6 +51,12 @@ class KebutuhanGiziController extends Controller
             $karbohidrat = $this->calKarbohidrat($data, $request->stress_fac, $request->activity_fac, $this->ageCor($request->umur));
             $data['karbohidrat'] = number_format($karbohidrat, 2, '.', '');
 
+            //kode
+            $count = DB::table('kebutuhan_gizi')->where('user_id',$request->user_id)->count() + 1;
+            $user = DB::table('pasien')->where('id',$request->user_id)->select('kode')->first();
+            $kode = $user->kode.'-'.$count.Carbon::now('Asia/Jakarta')->format('Ymd');
+            $data['kode'] = $kode;
+
             $nvb = new NVB();
             $payload = [
                 "protein" => $data["protein"],
@@ -60,7 +66,7 @@ class KebutuhanGiziController extends Controller
             ];
 
             $res = $nvb->nvBayes($payload);
-            //dd($res);
+            
             $kebutuhanGizi = KebutuhanGizi::create($data);
             SaranMakanan::create([
                 "kebutuhan_gizi_id" => $kebutuhanGizi["id"],

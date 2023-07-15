@@ -13,6 +13,7 @@ class KebutuhanGizi extends Model
 
     protected $fillable = [
         'user_id',
+        'kode',
         'umur',
         'tinggi',
         'berat',

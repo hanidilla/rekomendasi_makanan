@@ -14,8 +14,10 @@
                 <thead>
                     <tr>
                         <th>No</th>
-                        <th>Nama</th>
-                        <th>Kebutuhan Kalori (kal)</th>
+                        <th>Kode Kebutuhan Kalori</th>
+                        <th>Kode Pasien</th>
+                        <th>Nama Pasien</th>
+                        <th>Kalori (kal)</th>
                         <th>Protein (gr)</th>
                         <th>Lemak (gr)</th>
                         <th>Karbohidrat (gr)</th>
@@ -34,7 +36,6 @@
 <x-modal modalId="modal-add-gizi" modalTitle="Tambah gizi">
     <div class="form-group">
         <label for="">Pasien</label>
-        {{-- <input type="text" class="form-control form-control-sm" id="nama_bahan"> --}}
         <select name="" class="form-control" id="list-pasien">
             <option value="1">Aku</option>
         </select>
@@ -80,6 +81,8 @@
             ajax: '/api/kebutuhan-gizi',
             columns: [
                 { data: 'id', name: 'DT_RowIndex' },
+                { data: 'kode', name: 'kode' },
+                { data: 'pasien.kode', name: 'kode' },
                 { data: 'pasien.nama', name: 'nama' },
                 { data: 'kalori', name: 'kebutuhan_kalori' },
                 { data: 'protein', name: 'protein' },

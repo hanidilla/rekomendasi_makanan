@@ -196,10 +196,6 @@ class NaiveBayesController extends Controller
         $dataKarbo = DB::select('SELECT * FROM bahan_makanan WHERE kandungan_makanan = "karbohidrat"');
         $dataLemak = DB::select('SELECT * FROM bahan_makanan WHERE kandungan_makanan = "lemak"');
         $dataProtein = DB::select('SELECT * FROM bahan_makanan WHERE kandungan_makanan = "protein"');
-
-        // $dataMakanan = DB::select('SELECT * FROM bahan_makanan');
-
-        // $makanan = json_decode(json_encode($dataMakanan),true);
         $jmlKarbo = 0;
         $jmlLemak = 0;
         $jmlProtein = 0;
@@ -209,49 +205,6 @@ class NaiveBayesController extends Controller
         $kadungan = ['karbohidrat','lemak','protein'];
         $kadunganBagi = ['karbohidrat'=> 15 / 100,'lemak'=>65 / 100,'protein'=>35 / 100];
         $saran = ['pagi','siang','malam'];
-        // foreach ($dataMakanan as $key => $value) {
-        //     if ($value->kandungan_makanan == "karbohidrat") {
-        //         if ($jmlKarbo + $value->karbohidrat <= $payload['karbohidrat']) {
-        //             $jmlKarbo += $value->karbohidrat;
-        //             $jmlLemak += $value->lemak;
-        //             $jmlProtein += $value->protein;
-        //             $keyKarbo++;
-
-        //             $makanan['karbohidrat'][$keyKarbo]['id'] = $value->id;
-        //             $makanan['karbohidrat'][$keyKarbo]['bahan_makanan'] = $value->bahan_makanan;
-        //             $makanan['karbohidrat'][$keyKarbo]['berat'] = $value->berat;
-        //             $makanan['karbohidrat'][$keyKarbo]['energi'] = $value->energi;
-        //         }
-        //     }
-
-        //     if ($value->kandungan_makanan == "lemak") {
-        //         if ($jmlLemak + $value->lemak <= $payload['lemak']) {
-        //             $jmlKarbo += $value->karbohidrat;
-        //             $jmlLemak += $value->lemak;
-        //             $jmlProtein += $value->protein;
-        //             $keyLemak++;
-
-        //             $makanan['lemak'][$keyLemak]['id'] = $value->id;
-        //             $makanan['lemak'][$keyLemak]['bahan_makanan'] = $value->bahan_makanan;
-        //             $makanan['lemak'][$keyLemak]['berat'] = $value->berat;
-        //             $makanan['lemak'][$keyLemak]['energi'] = $value->energi;
-        //         }
-        //     }
-
-        //     if ($value->kandungan_makanan == "protein") {
-        //         if ($jmlProtein + $value->protein <= $payload['protein']) {
-        //             $jmlKarbo += $value->karbohidrat;
-        //             $jmlLemak += $value->lemak;
-        //             $jmlProtein += $value->protein;
-        //             $keyProtein++;
-
-        //             $makanan['protein'][$keyProtein]['id'] = $value->id;
-        //             $makanan['protein'][$keyProtein]['bahan_makanan'] = $value->bahan_makanan;
-        //             $makanan['protein'][$keyProtein]['berat'] = $value->berat;
-        //             $makanan['protein'][$keyProtein]['energi'] = $value->energi;
-        //         }
-        //     }
-        // }
 
         $hari = [];
         $hari['pagi']['data'] =  $payload['kalori'] * 20 / 100;
@@ -335,27 +288,41 @@ class NaiveBayesController extends Controller
         return $this->success($dataRet, "");
     }
 
-    public function getSaran()
+    public function getSaran(Request $request)
     {
-        $data = DB::table('saran_makanan as sm')
-                ->join('kebutuhan_gizi as kgz','kgz.id','=','sm.kebutuhan_gizi_id')
-                ->select('sm.*','kgz.user_id','umur','tinggi','berat','stress_fac','activity_fac','kalori','protein','lemak','karbohidrat')
-                ->get();
-        $dataRet = json_decode(json_encode($data),true);
-
-        foreach ($dataRet as $key => $value) 
+        $dataRet = [];
+        if(count($request->all()) > 0)
         {
-            $dataRet[$key]['data'] = json_decode($dataRet[$key]['data'],true);
-            $pasien = DB::table('pasien')->where('id',$value['user_id'])->first();
-            $dataRet[$key]['nama_pasien'] = '';
-            $dataRet[$key]['jenis_kelamin'] = '';
-            if($pasien)
+            $qry = DB::table('saran_makanan as sm');
+                $qry->join('kebutuhan_gizi as kgz','kgz.id','=','sm.kebutuhan_gizi_id');
+                $qry->join('pasien as ps','ps.id','=','kgz.user_id');
+                $qry->select('sm.*','kgz.user_id','kgz.kode as kode_kebutuhan','kgz.umur','kgz.tinggi','kgz.berat','kgz.stress_fac'
+                    ,'kgz.activity_fac','kgz.kalori','kgz.protein','kgz.lemak','kgz.karbohidrat');
+            if($request->kode != null)
             {
-                $dataRet[$key]['nama_pasien'] = $pasien->nama;
-                $dataRet[$key]['jenis_kelamin'] = $pasien->jenis_kelamin;
+                $qry->where('ps.kode',$request->kode);
+                $qry->Orwhere('kgz.kode',$request->kode);
             }
-            $dataRet[$key]['created_at'] = Carbon::parse($dataRet[$key]['created_at'])->format('Y F d H:i:s');
+            $qry->groupBy('kgz.id');
+            $data = $qry->get();
+            $dataRet = json_decode(json_encode($data),true);
+
+            foreach ($dataRet as $key => $value) 
+            {
+                $dataRet[$key]['data'] = json_decode($dataRet[$key]['data'],true);
+                $pasien = DB::table('pasien')->where('id',$value['user_id'])->first();
+                $dataRet[$key]['nama_pasien'] = '';
+                $dataRet[$key]['jenis_kelamin'] = '';
+                $dataRet[$key]['kode_pasien'] = '';
+                if($pasien)
+                {
+                    $dataRet[$key]['nama_pasien'] = $pasien->nama;
+                    $dataRet[$key]['jenis_kelamin'] = $pasien->jenis_kelamin;
+                    $dataRet[$key]['kode_pasien'] = $pasien->kode;
+                }
+                $dataRet[$key]['created_at'] = Carbon::parse($dataRet[$key]['created_at'])->format('Y F d H:i:s');
+            }
         }
-        return view('pages.pasien.naive-bayes',compact('dataRet'));
+        return view('pages.pasien.naive-bayes',compact('dataRet','request'));
     }
 }
