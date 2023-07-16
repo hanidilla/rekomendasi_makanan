@@ -162,11 +162,11 @@
                                             <table class="table">
                                                 <thead>
                                                     <tr>
-                                                        <th>Kalori</th>
-                                                        <th>Berat</th>
-                                                        <th>Kabohidrat</th>
-                                                        <th>Protein</th>
-                                                        <th>Lemak</th>
+                                                        <th>Kalori(kal)</th>
+                                                        <th>Berat(g)</th>
+                                                        <th>Kabohidrat(g)</th>
+                                                        <th>Protein(9)</th>
+                                                        <th>Lemak(9)</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -193,11 +193,11 @@
                                             <table class="table">
                                                 <thead>
                                                     <tr>
-                                                        <th>Kalori</th>
-                                                        <th>Berat</th>
-                                                        <th>Kabohidrat</th>
-                                                        <th>Protein</th>
-                                                        <th>Lemak</th>
+                                                        <th>Kalori(kal)</th>
+                                                        <th>Berat(g)</th>
+                                                        <th>Kabohidrat(g)</th>
+                                                        <th>Protein(9)</th>
+                                                        <th>Lemak(9)</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -224,11 +224,11 @@
                                             <table class="table">
                                                 <thead>
                                                     <tr>
-                                                        <th>Kalori</th>
-                                                        <th>Berat</th>
-                                                        <th>Kabohidrat</th>
-                                                        <th>Protein</th>
-                                                        <th>Lemak</th>
+                                                        <th>Kalori(kal)</th>
+                                                        <th>Berat(g)</th>
+                                                        <th>Kabohidrat(g)</th>
+                                                        <th>Protein(9)</th>
+                                                        <th>Lemak(9)</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -268,11 +268,11 @@
                                             <table class="table">
                                                 <thead>
                                                     <tr>
-                                                        <th>Kalori</th>
-                                                        <th>Berat</th>
-                                                        <th>Kabohidrat</th>
-                                                        <th>Protein</th>
-                                                        <th>Lemak</th>
+                                                        <th>Kalori(kal)</th>
+                                                        <th>Berat(g)</th>
+                                                        <th>Kabohidrat(g)</th>
+                                                        <th>Protein(9)</th>
+                                                        <th>Lemak(9)</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
