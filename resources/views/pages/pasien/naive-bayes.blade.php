@@ -99,7 +99,7 @@
                                 <td style="text-align: center;">{{$key+1}}</td>
                                 <td>
                                     <div class="row">
-                                        <div class="col-md-6">
+                                        <div class="col-md-4">
 
                                               <table class="table">
                                                 <thead>
@@ -158,7 +158,7 @@
                                              $total['lemak'] = 0;
                                              $total['berat'] = 0;
                                         @endphp
-                                        <div class="col-md-6">
+                                        <div class="col-md-8">
                                             <table class="table">
                                                 <thead>
                                                     <tr>
@@ -167,6 +167,9 @@
                                                         <th>Kabohidrat(g)</th>
                                                         <th>Protein(9)</th>
                                                         <th>Lemak(9)</th>
+                                                        <th>
+                                                            Akurasi
+                                                        </th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -177,6 +180,13 @@
                                                         <td>{{$childItem['karbohidrat']}}</td>
                                                         <td>{{$childItem['protein']}}</td>
                                                         <td>{{$childItem['lemak']}}</td>
+                                                        <td rowspan="">
+                                                          <!--  <ul>
+                                                               <li><input type="checkbox" name=""> Iya</li>
+                                                               <li><input type="checkbox" name=""> Kurang</li>
+                                                               <li><input type="checkbox" name=""> Tidak</li>
+                                                           </ul> -->
+                                                        </td>
                                                     </tr>
 
                                                     @php
@@ -198,6 +208,7 @@
                                                         <th>Kabohidrat(g)</th>
                                                         <th>Protein(9)</th>
                                                         <th>Lemak(9)</th>
+                                                        <th>Akurasi</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -208,6 +219,13 @@
                                                         <td>{{$childItem['karbohidrat']}}</td>
                                                         <td>{{$childItem['protein']}}</td>
                                                         <td>{{$childItem['lemak']}}</td>
+                                                        <td>
+                                                          <!--  <ul>
+                                                               <li><input type="checkbox" name=""> Iya</li>
+                                                               <li><input type="checkbox" name=""> Kurang</li>
+                                                               <li><input type="checkbox" name=""> Tidak</li>
+                                                           </ul> -->
+                                                        </td>
                                                     </tr>
 
                                                     @php
@@ -229,6 +247,7 @@
                                                         <th>Kabohidrat(g)</th>
                                                         <th>Protein(9)</th>
                                                         <th>Lemak(9)</th>
+                                                        <th>Akurasi</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -239,6 +258,13 @@
                                                         <td >{{$childItem['karbohidrat']}}</td>
                                                         <td>{{$childItem['protein']}}</td>
                                                         <td>{{$childItem['lemak']}}</td>
+                                                        <td>
+                                                           <!-- <ul>
+                                                               <li><input type="checkbox" name=""> Iya</li>
+                                                               <li><input type="checkbox" name=""> Kurang</li>
+                                                               <li><input type="checkbox" name=""> Tidak</li>
+                                                           </ul> -->
+                                                        </td>
                                                     </tr>
 
                                                     @php

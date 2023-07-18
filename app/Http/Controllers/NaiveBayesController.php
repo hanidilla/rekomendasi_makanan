@@ -191,7 +191,7 @@ class NaiveBayesController extends Controller
     }
 
 
-    public function nvBayes($payload)
+    public function nvBayes($payload,$data)
     {
         $dataKarbo = DB::select('SELECT * FROM bahan_makanan WHERE kandungan_makanan = "karbohidrat"');
         $dataLemak = DB::select('SELECT * FROM bahan_makanan WHERE kandungan_makanan = "lemak"');
@@ -203,25 +203,51 @@ class NaiveBayesController extends Controller
         $keyProtein = -1;
         $keyLemak = -1;
         $kadungan = ['karbohidrat','lemak','protein'];
-        $kadunganBagi = ['karbohidrat'=> 15 / 100,'lemak'=>65 / 100,'protein'=>35 / 100];
+        $kadunganBagi = ['karbohidrat'=> 60 / 100,'lemak'=>20 / 100,'protein'=>10 / 100];
         $saran = ['pagi','siang','malam'];
 
         $hari = [];
         $hari['pagi']['data'] =  $payload['kalori'] * 20 / 100;
-        $hari['pagi']['protein'] =  $payload['protein'] * 15 / 100;
-        $hari['pagi']['karbohidrat'] =  $payload['karbohidrat'] * 65 / 100;
-        $hari['pagi']['lemak'] =  $payload['lemak'] * 35 / 100;
+        $hari['pagi']['protein'] =  $payload['protein'] * 10 / 100;
+        $hari['pagi']['karbohidrat'] =  $payload['karbohidrat'] * 60 / 100;
+        $hari['pagi']['lemak'] =  $payload['lemak'] * 20 / 100;
 
         $hari['siang']['data'] = $payload['kalori'] * 30 / 100;
-        $hari['siang']['protein'] =  $payload['protein'] * 15 / 100;
-        $hari['siang']['karbohidrat'] =  $payload['karbohidrat'] * 65 / 100;
-        $hari['siang']['lemak'] =  $payload['lemak'] * 35 / 100;
+        $hari['siang']['protein'] =  $payload['protein'] * 10 / 100;
+        $hari['siang']['karbohidrat'] =  $payload['karbohidrat'] * 60 / 100;
+        $hari['siang']['lemak'] =  $payload['lemak'] * 20 / 100;
 
         $hari['malam']['data'] = $payload['kalori'] * 25 / 100;
-        $hari['malam']['protein'] =  $payload['protein'] * 15 / 100;
-        $hari['malam']['karbohidrat'] =  $payload['karbohidrat'] * 65 / 100;
-        $hari['malam']['lemak'] =  $payload['lemak'] * 35 / 100;
+        $hari['malam']['protein'] =  $payload['protein'] * 10 / 100;
+        $hari['malam']['karbohidrat'] =  $payload['karbohidrat'] * 60 / 100;
+        $hari['malam']['lemak'] =  $payload['lemak'] * 20 / 100;
         $arr = [];
+        $arrId = [];
+        $arrSama = [];
+        $checkSama = DB::table('kebutuhan_gizi')
+                    ->where('user_id',$data['user_id'])
+                    ->where('umur',$data['umur'])
+                    ->where('tinggi',$data['tinggi'])
+                    ->where('berat',$data['berat'])
+                    ->where('stress_fac',$data['stress_fac'])
+                    ->where('activity_fac',$data['activity_fac'])
+                    ->get();
+        if(!$checkSama->isEmpty())
+        {
+            foreach ($checkSama as $k => $v) 
+            {
+                 $saranMakanan = DB::table('saran_makanan')->where('kebutuhan_gizi_id',$v->id)->get();
+                 foreach ($saranMakanan as $i => $j) 
+                 {
+                     $arr = explode(',', $j->arr_id);
+                     foreach ($arr as $a => $r) 
+                     {
+                        array_push($arrSama, $r);
+                     }
+                 }
+            }
+        }
+        $totalSama = count($checkSama);
         foreach ($kadungan as $kadunganKey => $kadunganItem) 
         {
                 $keyNumber = [];
@@ -230,22 +256,43 @@ class NaiveBayesController extends Controller
                 $keyNumber['malam'] = 0;
                 $energi = [];
                 $energi[$kadunganItem] = 0;
-                $validated = [];
+                $validated = $arrSama;
+                if($totalSama >= 1)
+                {
+                    $validated = array_merge($validated,$arrSama);
+                }else
+                {
+                    $validated = [];
+                }
+                
                 foreach ($saran as $saranKey => $saranItem) 
                 {
                     $bobot = $hari[$saranItem][$kadunganItem];
-                    $dataMakanan = DB::table('bahan_makanan')->where('energi','<=',$bobot)
+                    $dataMakanan = DB::table('bahan_makanan')
+                                   ->where('energi','<=',$bobot)
                                    ->where('kandungan_makanan',$kadunganItem)
                                    ->whereNotIn('id',$validated)
                                    ->orderBy('energi','DESC')
-                                   ->groupBy('type')
+                                   ->limit(4)
                                    ->get();
                     $makanan = json_decode(json_encode($dataMakanan),true);
+                    $validateFourt = 0;
+                    if(count($makanan) < 4)
+                    {
+                        $dataMakanan = DB::table('bahan_makanan')
+                                   ->where('energi','<=',$bobot)
+                                   ->where('kandungan_makanan',$kadunganItem)
+                                   ->orderBy('energi','DESC')
+                                   ->limit(4)
+                                   ->get();
+                         $makanan = json_decode(json_encode($dataMakanan),true);
+                    }
                     foreach ($makanan as $makananKey => $makananItem) 
                     {
                         if($makananItem['energi'] <= $bobot)
                         {
                             array_push($validated, $makananItem['id']);
+                            array_push($arrId, $makananItem['id']);
                             $keyNumber[$saranItem]++;
                             $berat = $makananItem['energi'] * $kadunganBagi[$kadunganItem];
                             $arr[$saranItem][$keyNumber[$saranItem]]['makanan'] = $makananItem['bahan_makanan'];
@@ -258,7 +305,10 @@ class NaiveBayesController extends Controller
                     }
                }
         }
-        return $arr;
+        $result = [];
+        $result['arr'] = $arr;
+        $result['id'] = array_unique($arrId);
+        return $result;
     }
 
     public function getRes()

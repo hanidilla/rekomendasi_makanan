@@ -22,6 +22,8 @@ class KebutuhanGizi extends Model
         'kalori',
         'protein',
         'lemak',
+        'bb_ideal',
+        'bmr',
         'karbohidrat',
     ];
 

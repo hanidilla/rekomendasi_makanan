@@ -17,6 +17,11 @@
                         <th>Kode Kebutuhan Kalori</th>
                         <th>Kode Pasien</th>
                         <th>Nama Pasien</th>
+                        <th>Umur : (Normalisasi)</th>
+                        <th>TB (cm)</th>
+                        <th>BB (kg)</th>
+                        <th>FA</th>
+                        <th>FS</th>
                         <th>Kalori (kal)</th>
                         <th>Protein (gr)</th>
                         <th>Lemak (gr)</th>
@@ -84,6 +89,11 @@
                 { data: 'kode', name: 'kode' },
                 { data: 'pasien.kode', name: 'kode' },
                 { data: 'pasien.nama', name: 'nama' },
+                { data: 'umur_prosentanse', name: 'umur_prosentanse' },
+                { data: 'tinggi', name: 'tinggi' },
+                { data: 'berat', name: 'berat' },
+                { data: 'activity_fac', name: 'activity_fac' },
+                { data: 'stress_fac', name: 'stress_fac' },
                 { data: 'kalori', name: 'kebutuhan_kalori' },
                 { data: 'protein', name: 'protein' },
                 { data: 'lemak', name: 'lemak' },
