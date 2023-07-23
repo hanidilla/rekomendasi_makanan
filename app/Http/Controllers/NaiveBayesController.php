@@ -203,7 +203,7 @@ class NaiveBayesController extends Controller
         $keyProtein = -1;
         $keyLemak = -1;
         $kadungan = ['karbohidrat','lemak','protein'];
-        $kadunganBagi = ['karbohidrat'=> 60 / 100,'lemak'=>20 / 100,'protein'=>10 / 100];
+        $kadunganBagi = ['karbohidrat'=> 60 / 100,'lemak'=>20 / 100,'protein'=>20 / 100];
         $saran = ['pagi','siang','malam'];
 
         $hari = [];
