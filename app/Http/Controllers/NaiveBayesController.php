@@ -268,24 +268,33 @@ class NaiveBayesController extends Controller
                 foreach ($saran as $saranKey => $saranItem) 
                 {
                     $bobot = $hari[$saranItem][$kadunganItem];
-                    $dataMakanan = DB::table('bahan_makanan')
-                                   ->where('energi','<=',$bobot)
-                                   ->where('kandungan_makanan',$kadunganItem)
-                                   ->whereNotIn('id',$validated)
-                                   ->orderBy('energi','DESC')
-                                   ->limit(4)
-                                   ->get();
+                    $dtMakanan = DB::table('bahan_makanan');
+                    $dtMakanan$dtMakanan->where('energi','<=',$bobot);
+                    $dtMakanan->where('kandungan_makanan',$kadunganItem);
+                    $dtMakanan->whereNotIn('id',$validated);
+                    $dtMakanan->orderBy('energi','DESC');
+                    if($kadunganItem == 'karbohidrat')
+                    {
+                        $dtMakanan->groupBy('kandungan_makanan');
+                    }
+                    $dtMakanan->limit(4);
+                    $dataMakanan = $dtMakanan->get();
                     $makanan = json_decode(json_encode($dataMakanan),true);
                     $validateFourt = 0;
                     if(count($makanan) < 4)
                     {
-                        $dataMakanan = DB::table('bahan_makanan')
-                                   ->where('energi','<=',$bobot)
-                                   ->where('kandungan_makanan',$kadunganItem)
-                                   ->orderBy('energi','DESC')
-                                   ->limit(4)
-                                   ->get();
-                         $makanan = json_decode(json_encode($dataMakanan),true);
+                        $dtMakanan = DB::table('bahan_makanan');
+                        $dtMakanan$dtMakanan->where('energi','<=',$bobot);
+                        $dtMakanan->where('kandungan_makanan',$kadunganItem);
+                        $dtMakanan->whereNotIn('id',$validated);
+                        $dtMakanan->orderBy('energi','DESC');
+                        if($kadunganItem == 'karbohidrat')
+                        {
+                            $dtMakanan->groupBy('kandungan_makanan');
+                        }
+                        $dtMakanan->limit(4);
+                        $dataMakanan = $dtMakanan->get();
+                        $makanan = json_decode(json_encode($dataMakanan),true);
                     }
                     foreach ($makanan as $makananKey => $makananItem) 
                     {
