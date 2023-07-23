@@ -84,7 +84,7 @@ class KebutuhanGiziController extends Controller
             ];
 
             $res = $nvb->nvBayes($payload,$data);
-            
+            dd($res['arr']);
             $kebutuhanGizi = KebutuhanGizi::create($data);
             SaranMakanan::create([
                 "kebutuhan_gizi_id" => $kebutuhanGizi["id"],

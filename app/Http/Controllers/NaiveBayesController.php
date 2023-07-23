@@ -203,22 +203,22 @@ class NaiveBayesController extends Controller
         $keyProtein = -1;
         $keyLemak = -1;
         $kadungan = ['karbohidrat','lemak','protein'];
-        $kadunganBagi = ['karbohidrat'=> 60 / 100,'lemak'=>20 / 100,'protein'=>20 / 100];
+        $kadunganBagi = ['karbohidrat'=> 60 / 100,'lemak'=>20 / 100,'protein'=>10 / 100];
         $saran = ['pagi','siang','malam'];
 
         $hari = [];
         $hari['pagi']['data'] =  $payload['kalori'] * 30 / 100;
-        $hari['pagi']['protein'] =  $payload['protein'] * 20 / 100;
+        $hari['pagi']['protein'] =  $payload['protein'] * 10 / 100;
         $hari['pagi']['karbohidrat'] =  $payload['karbohidrat'] * 60 / 100;
         $hari['pagi']['lemak'] =  $payload['lemak'] * 20 / 100;
 
         $hari['siang']['data'] = $payload['kalori'] * 40 / 100;
-        $hari['siang']['protein'] =  $payload['protein'] * 20 / 100;
+        $hari['siang']['protein'] =  $payload['protein'] * 10 / 100;
         $hari['siang']['karbohidrat'] =  $payload['karbohidrat'] * 60 / 100;
         $hari['siang']['lemak'] =  $payload['lemak'] * 20 / 100;
 
         $hari['malam']['data'] = $payload['kalori'] * 30 / 100;
-        $hari['malam']['protein'] =  $payload['protein'] * 20 / 100;
+        $hari['malam']['protein'] =  $payload['protein'] * 10 / 100;
         $hari['malam']['karbohidrat'] =  $payload['karbohidrat'] * 60 / 100;
         $hari['malam']['lemak'] =  $payload['lemak'] * 20 / 100;
         $arr = [];
@@ -268,38 +268,29 @@ class NaiveBayesController extends Controller
                 foreach ($saran as $saranKey => $saranItem) 
                 {
                     $bobot = $hari[$saranItem][$kadunganItem];
-                    $dtMakanan = DB::table('bahan_makanan');
-                    $dtMakanan$dtMakanan->where('energi','<=',$bobot);
-                    $dtMakanan->where('kandungan_makanan',$kadunganItem);
-                    $dtMakanan->whereNotIn('id',$validated);
-                    $dtMakanan->orderBy('energi','DESC');
-                    if($kadunganItem == 'karbohidrat')
-                    {
-                        $dtMakanan->groupBy('kandungan_makanan');
-                    }
-                    $dtMakanan->limit(4);
-                    $dataMakanan = $dtMakanan->get();
+                    $dataMakanan = DB::table('bahan_makanan')
+                                   ->where('energi','<=',$bobot)
+                                   //->where('kandungan_makanan',$kadunganItem)
+                                   ->whereNotIn('id',$validated)
+                                   ->orderBy('energi','DESC')
+                                  // ->limit(4)
+                                   ->get();
                     $makanan = json_decode(json_encode($dataMakanan),true);
                     $validateFourt = 0;
                     if(count($makanan) < 4)
                     {
-                        $dtMakanan = DB::table('bahan_makanan');
-                        $dtMakanan$dtMakanan->where('energi','<=',$bobot);
-                        $dtMakanan->where('kandungan_makanan',$kadunganItem);
-                        $dtMakanan->whereNotIn('id',$validated);
-                        $dtMakanan->orderBy('energi','DESC');
-                        if($kadunganItem == 'karbohidrat')
-                        {
-                            $dtMakanan->groupBy('kandungan_makanan');
-                        }
-                        $dtMakanan->limit(4);
-                        $dataMakanan = $dtMakanan->get();
-                        $makanan = json_decode(json_encode($dataMakanan),true);
+                        $dataMakanan = DB::table('bahan_makanan')
+                                   ->where('energi','<=',$bobot)
+                                  // ->where('kandungan_makanan',$kadunganItem)
+                                   ->orderBy('energi','DESC')
+                                   //->limit(4)
+                                   ->get();
+                         $makanan = json_decode(json_encode($dataMakanan),true);
                     }
                     foreach ($makanan as $makananKey => $makananItem) 
                     {
-                        if($makananItem['energi'] <= $bobot)
-                        {
+                       // if($makananItem['energi'] <= $bobot)
+                       // {
                             array_push($validated, $makananItem['id']);
                             array_push($arrId, $makananItem['id']);
                             $keyNumber[$saranItem]++;
@@ -310,10 +301,32 @@ class NaiveBayesController extends Controller
                             $arr[$saranItem][$keyNumber[$saranItem]]['karbohidrat'] = $makananItem['karbohidrat'];
                             $arr[$saranItem][$keyNumber[$saranItem]]['protein'] = $makananItem['protein'];
                             $arr[$saranItem][$keyNumber[$saranItem]]['lemak'] = $makananItem['lemak'];
-                        }
+                            $arr[$saranItem][$keyNumber[$saranItem]]['kandungan_makanan'] = $makananItem['kandungan_makanan'];
+                        //}
                     }
                }
         }
+
+        // $filter = [];
+        // foreach ($arr['pagi'] as $value)
+        // {
+        //     $filter[$value['kandungan_makanan']] = $value;
+        // }
+        // $arr['pagi'] = array_values($filter);
+
+        // $filter = [];
+        // foreach ($arr['siang'] as $value)
+        // {
+        //     $filter[$value['kandungan_makanan']] = $value;
+        // }
+        // $arr['siang'] = array_values($filter);
+
+        // $filter = [];
+        // foreach ($arr['malam'] as $value)
+        // {
+        //     $filter[$value['kandungan_makanan']] = $value;
+        // }
+        // $arr['malam'] = array_values($filter);
         $result = [];
         $result['arr'] = $arr;
         $result['id'] = array_unique($arrId);
