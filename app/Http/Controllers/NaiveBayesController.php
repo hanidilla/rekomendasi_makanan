@@ -208,17 +208,17 @@ class NaiveBayesController extends Controller
 
         $hari = [];
         $hari['pagi']['data'] =  $payload['kalori'] * 30 / 100;
-        $hari['pagi']['protein'] =  $payload['protein'] * 10 / 100;
+        $hari['pagi']['protein'] =  $payload['protein'] * 20 / 100;
         $hari['pagi']['karbohidrat'] =  $payload['karbohidrat'] * 60 / 100;
         $hari['pagi']['lemak'] =  $payload['lemak'] * 20 / 100;
 
         $hari['siang']['data'] = $payload['kalori'] * 40 / 100;
-        $hari['siang']['protein'] =  $payload['protein'] * 10 / 100;
+        $hari['siang']['protein'] =  $payload['protein'] * 20 / 100;
         $hari['siang']['karbohidrat'] =  $payload['karbohidrat'] * 60 / 100;
         $hari['siang']['lemak'] =  $payload['lemak'] * 20 / 100;
 
         $hari['malam']['data'] = $payload['kalori'] * 30 / 100;
-        $hari['malam']['protein'] =  $payload['protein'] * 10 / 100;
+        $hari['malam']['protein'] =  $payload['protein'] * 20 / 100;
         $hari['malam']['karbohidrat'] =  $payload['karbohidrat'] * 60 / 100;
         $hari['malam']['lemak'] =  $payload['lemak'] * 20 / 100;
         $arr = [];
