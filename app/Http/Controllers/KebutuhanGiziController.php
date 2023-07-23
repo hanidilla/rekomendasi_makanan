@@ -173,7 +173,7 @@ class KebutuhanGiziController extends Controller
     public function calProteinNew($data)
     {
         $kalori = $data['kalori'];
-        $persen = 10 / 100;
+        $persen = 20 / 100;
         $protein = $kalori * $persen / 4;
         return $protein;
     }
