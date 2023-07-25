@@ -249,7 +249,6 @@ class NaiveBayesController extends Controller
                                    ->where('energi','<=',$bobot)
                                    ->orderBy('energi','DESC')
                                    ->whereNotIn('id',$validated)
-                                   //->inRandomOrder()
                                    ->limit(1)
                                    ->get();
                     }else
@@ -259,22 +258,21 @@ class NaiveBayesController extends Controller
                                    ->where('energi','<=',$bobot)
                                    ->orderBy('energi','DESC')
                                    ->whereNotIn('id',$validated)
-                                   //->inRandomOrder()
                                    ->limit(2)
                                    ->get();
                     }
+
                     $makanan = json_decode(json_encode($dataMakanan),true);
                     foreach ($makanan as $makananKey => $makananItem) 
                     {
-                       $bbt = $payload['kalori'] - $bobotVal;
-                       if($bbt <= 100)
+                       $bobotVal += $makananItem['energi']; 
+                       if($bobotVal >= $payload['kalori'])
                        {
                             array_push($validated, $makananItem['id']);
                             array_push($arrId, $makananItem['id']);
                             array_push($makananArr, $makananItem['bahan_makanan']);
                             $keyNumber[$saranItem]++;
                             $number = $keyNumber[$saranItem];
-                            $bobotVal += $makananItem['energi'];
                             $berat = $makananItem['energi'] * $kadunganBagi[$kadunganItem];
                             $arr[$saranItem][$number]['makanan'] = $makananItem['bahan_makanan'];
                             $arr[$saranItem][$number]['berat'] = $berat;
@@ -283,6 +281,7 @@ class NaiveBayesController extends Controller
                             $arr[$saranItem][$number]['protein'] = $makananItem['protein'];
                             $arr[$saranItem][$number]['lemak'] = $makananItem['lemak'];
                             $arr[$saranItem][$number]['kandungan_makanan'] = $makananItem['kandungan_makanan'];
+
                         }
                     }
                }
