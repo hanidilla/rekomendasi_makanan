@@ -266,7 +266,8 @@ class NaiveBayesController extends Controller
                     $makanan = json_decode(json_encode($dataMakanan),true);
                     foreach ($makanan as $makananKey => $makananItem) 
                     {
-                       if($bobotVal >= $payload['kalori'])
+                       $bbt = $payload['kalori'] - $bobotVal;
+                       if($bbt <= 100)
                        {
                             array_push($validated, $makananItem['id']);
                             array_push($arrId, $makananItem['id']);
