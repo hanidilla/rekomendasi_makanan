@@ -246,26 +246,26 @@ class NaiveBayesController extends Controller
                     {
                         $dataMakanan = DB::table('bahan_makanan')
                                    ->where('kandungan_makanan',$kadunganItem)
-                                   ->where('energi','<=',$bobot)
+                                //   ->where('energi','<=',$bobot)
                                    ->orderBy('energi','DESC')
                                    ->whereNotIn('id',$validated)
+                                   ->inRandomOrder()
                                    ->limit(1)
                                    ->get();
                     }else
                     {
                         $dataMakanan = DB::table('bahan_makanan')
                                    ->where('kandungan_makanan',$kadunganItem)
-                                   ->where('energi','<=',$bobot)
+                                  // ->where('energi','<=',$bobot)
                                    ->orderBy('energi','DESC')
                                    ->whereNotIn('id',$validated)
-                                   ->limit(2)
+                                   ->inRandomOrder()
+                                  // ->limit(2)
                                    ->get();
                     }
-
                     $makanan = json_decode(json_encode($dataMakanan),true);
                     foreach ($makanan as $makananKey => $makananItem) 
                     {
-                       $bobotVal += $makananItem['energi']; 
                        if($bobotVal <= $payload['kalori'])
                        {
                             array_push($validated, $makananItem['id']);
@@ -273,6 +273,7 @@ class NaiveBayesController extends Controller
                             array_push($makananArr, $makananItem['bahan_makanan']);
                             $keyNumber[$saranItem]++;
                             $number = $keyNumber[$saranItem];
+                            $bobotVal += $makananItem['energi'];
                             $berat = $makananItem['energi'] * $kadunganBagi[$kadunganItem];
                             $arr[$saranItem][$number]['makanan'] = $makananItem['bahan_makanan'];
                             $arr[$saranItem][$number]['berat'] = $berat;
@@ -281,7 +282,6 @@ class NaiveBayesController extends Controller
                             $arr[$saranItem][$number]['protein'] = $makananItem['protein'];
                             $arr[$saranItem][$number]['lemak'] = $makananItem['lemak'];
                             $arr[$saranItem][$number]['kandungan_makanan'] = $makananItem['kandungan_makanan'];
-
                         }
                     }
                }
