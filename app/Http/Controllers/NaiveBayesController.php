@@ -246,21 +246,21 @@ class NaiveBayesController extends Controller
                     {
                         $dataMakanan = DB::table('bahan_makanan')
                                    ->where('kandungan_makanan',$kadunganItem)
-                                //   ->where('energi','<=',$bobot)
+                                   ->where('energi','<=',$bobot)
                                    ->orderBy('energi','DESC')
                                    ->whereNotIn('id',$validated)
-                                   ->inRandomOrder()
+                                   //->inRandomOrder()
                                    ->limit(1)
                                    ->get();
                     }else
                     {
                         $dataMakanan = DB::table('bahan_makanan')
                                    ->where('kandungan_makanan',$kadunganItem)
-                                  // ->where('energi','<=',$bobot)
+                                   ->where('energi','<=',$bobot)
                                    ->orderBy('energi','DESC')
-                                   ->whereNotIn('id',$validated)
-                                   ->inRandomOrder()
-                                   ->limit(3)
+                                   //->whereNotIn('id',$validated)
+                                   //->inRandomOrder()
+                                   ->limit(1)
                                    ->get();
                     }
                     $makanan = json_decode(json_encode($dataMakanan),true);
@@ -286,6 +286,15 @@ class NaiveBayesController extends Controller
                     }
                }
         }
+
+        // $finalArr = [];
+        // foreach ($saran as $saranKey => $saranItem)
+        // {
+        //     foreach ($kadungan as $kadunganKey => $kadunganItem)
+        //     {
+        //         $finalArr[$saranItem][$kadunganKey] = $arr[$saranItem][$kadunganItem][array_rand($arr[$saranItem][$kadunganItem])];
+        //     }
+        // }
         $result = [];
         $result['arr'] = $arr;
         return $result;
