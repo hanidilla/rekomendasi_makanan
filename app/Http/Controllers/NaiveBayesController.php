@@ -260,7 +260,7 @@ class NaiveBayesController extends Controller
                                    ->orderBy('energi','DESC')
                                    ->whereNotIn('id',$validated)
                                    ->inRandomOrder()
-                                  // ->limit(2)
+                                   ->limit(3)
                                    ->get();
                     }
                     $makanan = json_decode(json_encode($dataMakanan),true);
