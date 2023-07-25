@@ -266,7 +266,7 @@ class NaiveBayesController extends Controller
                     foreach ($makanan as $makananKey => $makananItem) 
                     {
                        $bobotVal += $makananItem['energi']; 
-                       if($bobotVal <= $payload['kalori'] && $bobotVal >= $payload['kalori'])
+                       if($bobotVal <= $payload['kalori'])
                        {
                             array_push($validated, $makananItem['id']);
                             array_push($arrId, $makananItem['id']);
