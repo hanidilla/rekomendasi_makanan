@@ -266,7 +266,7 @@ class NaiveBayesController extends Controller
                     $makanan = json_decode(json_encode($dataMakanan),true);
                     foreach ($makanan as $makananKey => $makananItem) 
                     {
-                       if($bobotVal <= $payload['kalori'])
+                       if($bobotVal >= $payload['kalori'])
                        {
                             array_push($validated, $makananItem['id']);
                             array_push($arrId, $makananItem['id']);
@@ -286,15 +286,6 @@ class NaiveBayesController extends Controller
                     }
                }
         }
-
-        // $finalArr = [];
-        // foreach ($saran as $saranKey => $saranItem)
-        // {
-        //     foreach ($kadungan as $kadunganKey => $kadunganItem)
-        //     {
-        //         $finalArr[$saranItem][$kadunganKey] = $arr[$saranItem][$kadunganItem][array_rand($arr[$saranItem][$kadunganItem])];
-        //     }
-        // }
         $result = [];
         $result['arr'] = $arr;
         return $result;
