@@ -84,12 +84,12 @@ class KebutuhanGiziController extends Controller
             ];
 
             $res = $nvb->nvBayes($payload,$data);
-            dd($res['arr']);
+           // dd($res['arr']);
             $kebutuhanGizi = KebutuhanGizi::create($data);
             SaranMakanan::create([
                 "kebutuhan_gizi_id" => $kebutuhanGizi["id"],
                 "data" => json_encode($res['arr']),
-                "arr_id" => implode(',', $res['id']),
+                //"arr_id" => implode(',', $res['id']),
             ]);
             DB::commit();
             return $this->success($kebutuhanGizi, 'Kebutuhan Gizi Berhasil Dibuat');

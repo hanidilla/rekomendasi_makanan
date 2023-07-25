@@ -14,7 +14,7 @@ class SaranMakanan extends Model
     protected $fillable = [
         'kebutuhan_gizi_id',
         'data',
-        'arr_id',
+        //'arr_id',
     ];
 
     /**

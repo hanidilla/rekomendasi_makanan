@@ -206,132 +206,100 @@ class NaiveBayesController extends Controller
         $kadunganBagi = ['karbohidrat'=> 60 / 100,'lemak'=>20 / 100,'protein'=>10 / 100];
         $saran = ['pagi','siang','malam'];
 
+        $dataBagi = [];
+
         $hari = [];
         $hari['pagi']['data'] =  $payload['kalori'] * 30 / 100;
         $hari['pagi']['protein'] =  $payload['protein'] * 10 / 100;
         $hari['pagi']['karbohidrat'] =  $payload['karbohidrat'] * 60 / 100;
         $hari['pagi']['lemak'] =  $payload['lemak'] * 20 / 100;
+        $dataBagi['pagi'] = $hari['pagi']['data'] + $hari['pagi']['protein'] + $hari['pagi']['karbohidrat'] + $hari['pagi']['lemak'];
 
         $hari['siang']['data'] = $payload['kalori'] * 40 / 100;
         $hari['siang']['protein'] =  $payload['protein'] * 10 / 100;
         $hari['siang']['karbohidrat'] =  $payload['karbohidrat'] * 60 / 100;
         $hari['siang']['lemak'] =  $payload['lemak'] * 20 / 100;
+        $dataBagi['siang'] = $hari['siang']['data'] + $hari['siang']['protein'] + $hari['siang']['karbohidrat'] + $hari['siang']['lemak'];
 
         $hari['malam']['data'] = $payload['kalori'] * 30 / 100;
         $hari['malam']['protein'] =  $payload['protein'] * 10 / 100;
         $hari['malam']['karbohidrat'] =  $payload['karbohidrat'] * 60 / 100;
         $hari['malam']['lemak'] =  $payload['lemak'] * 20 / 100;
+        $dataBagi['malam'] = $hari['malam']['data'] + $hari['malam']['protein'] + $hari['malam']['karbohidrat'] + $hari['malam']['lemak'];
+        
         $arr = [];
         $arrId = [];
-        $arrSama = [];
-        $checkSama = DB::table('kebutuhan_gizi')
-                    ->where('user_id',$data['user_id'])
-                    ->where('umur',$data['umur'])
-                    ->where('tinggi',$data['tinggi'])
-                    ->where('berat',$data['berat'])
-                    ->where('stress_fac',$data['stress_fac'])
-                    ->where('activity_fac',$data['activity_fac'])
-                    ->get();
-        if(!$checkSama->isEmpty())
-        {
-            foreach ($checkSama as $k => $v) 
-            {
-                 $saranMakanan = DB::table('saran_makanan')->where('kebutuhan_gizi_id',$v->id)->get();
-                 foreach ($saranMakanan as $i => $j) 
-                 {
-                     $arr = explode(',', $j->arr_id);
-                     foreach ($arr as $a => $r) 
-                     {
-                        array_push($arrSama, $r);
-                     }
-                 }
-            }
-        }
-        $totalSama = count($checkSama);
-        foreach ($kadungan as $kadunganKey => $kadunganItem) 
+        $makananArr = [];
+        $validated = [];
+        $bobotVal = 0;
+        foreach ($saran as $saranKey => $saranItem) 
         {
                 $keyNumber = [];
                 $keyNumber['pagi'] =  0;
                 $keyNumber['siang'] = 0;
                 $keyNumber['malam'] = 0;
-                $energi = [];
-                $energi[$kadunganItem] = 0;
-                $validated = $arrSama;
-                if($totalSama >= 1)
-                {
-                    $validated = array_merge($validated,$arrSama);
-                }else
-                {
-                    $validated = [];
-                }
                 
-                foreach ($saran as $saranKey => $saranItem) 
+                foreach ($kadungan as $kadunganKey => $kadunganItem) 
                 {
-                    $bobot = $hari[$saranItem][$kadunganItem];
-                    $dataMakanan = DB::table('bahan_makanan')
-                                   ->where('energi','<=',$bobot)
-                                   //->where('kandungan_makanan',$kadunganItem)
-                                   ->whereNotIn('id',$validated)
-                                   ->orderBy('energi','DESC')
-                                  // ->limit(4)
-                                   ->get();
-                    $makanan = json_decode(json_encode($dataMakanan),true);
-                    $validateFourt = 0;
-                    if(count($makanan) < 4)
+                    $bobot = $dataBagi[$saranItem];
+                    if($kadunganItem == 'karbohidrat')
                     {
                         $dataMakanan = DB::table('bahan_makanan')
+                                   ->where('kandungan_makanan',$kadunganItem)
                                    ->where('energi','<=',$bobot)
-                                  // ->where('kandungan_makanan',$kadunganItem)
                                    ->orderBy('energi','DESC')
-                                   //->limit(4)
+                                   ->whereNotIn('id',$validated)
+                                   //->inRandomOrder()
+                                   ->limit(1)
                                    ->get();
-                         $makanan = json_decode(json_encode($dataMakanan),true);
+                    }else
+                    {
+                        $dataMakanan = DB::table('bahan_makanan')
+                                   ->where('kandungan_makanan',$kadunganItem)
+                                   ->where('energi','<=',$bobot)
+                                   ->orderBy('energi','DESC')
+                                   ->whereNotIn('id',$validated)
+                                   //->inRandomOrder()
+                                   ->limit(2)
+                                   ->get();
                     }
+                    $makanan = json_decode(json_encode($dataMakanan),true);
                     foreach ($makanan as $makananKey => $makananItem) 
                     {
-                       // if($makananItem['energi'] <= $bobot)
-                       // {
+                       if($bobotVal <= $payload['kalori'])
+                       {
                             array_push($validated, $makananItem['id']);
                             array_push($arrId, $makananItem['id']);
+                            array_push($makananArr, $makananItem['bahan_makanan']);
                             $keyNumber[$saranItem]++;
+                            $number = $keyNumber[$saranItem];
+                            $bobotVal += $makananItem['energi'];
                             $berat = $makananItem['energi'] * $kadunganBagi[$kadunganItem];
-                            $arr[$saranItem][$keyNumber[$saranItem]]['makanan'] = $makananItem['bahan_makanan'];
-                            $arr[$saranItem][$keyNumber[$saranItem]]['berat'] = $berat;
-                            $arr[$saranItem][$keyNumber[$saranItem]]['kalori'] = $makananItem['energi'];
-                            $arr[$saranItem][$keyNumber[$saranItem]]['karbohidrat'] = $makananItem['karbohidrat'];
-                            $arr[$saranItem][$keyNumber[$saranItem]]['protein'] = $makananItem['protein'];
-                            $arr[$saranItem][$keyNumber[$saranItem]]['lemak'] = $makananItem['lemak'];
-                            $arr[$saranItem][$keyNumber[$saranItem]]['kandungan_makanan'] = $makananItem['kandungan_makanan'];
-                        //}
+                            $arr[$saranItem][$number]['makanan'] = $makananItem['bahan_makanan'];
+                            $arr[$saranItem][$number]['berat'] = $berat;
+                            $arr[$saranItem][$number]['kalori'] = $makananItem['energi'];
+                            $arr[$saranItem][$number]['karbohidrat'] = $makananItem['karbohidrat'];
+                            $arr[$saranItem][$number]['protein'] = $makananItem['protein'];
+                            $arr[$saranItem][$number]['lemak'] = $makananItem['lemak'];
+                            $arr[$saranItem][$number]['kandungan_makanan'] = $makananItem['kandungan_makanan'];
+                        }
                     }
                }
         }
 
-        // $filter = [];
-        // foreach ($arr['pagi'] as $value)
+        // $finalArr = [];
+        // foreach ($saran as $saranKey => $saranItem)
         // {
-        //     $filter[$value['kandungan_makanan']] = $value;
+        //     foreach ($kadungan as $kadunganKey => $kadunganItem)
+        //     {
+        //         $finalArr[$saranItem][$kadunganKey] = $arr[$saranItem][$kadunganItem][array_rand($arr[$saranItem][$kadunganItem])];
+        //     }
         // }
-        // $arr['pagi'] = array_values($filter);
-
-        // $filter = [];
-        // foreach ($arr['siang'] as $value)
-        // {
-        //     $filter[$value['kandungan_makanan']] = $value;
-        // }
-        // $arr['siang'] = array_values($filter);
-
-        // $filter = [];
-        // foreach ($arr['malam'] as $value)
-        // {
-        //     $filter[$value['kandungan_makanan']] = $value;
-        // }
-        // $arr['malam'] = array_values($filter);
         $result = [];
         $result['arr'] = $arr;
-        $result['id'] = array_unique($arrId);
         return $result;
     }
+
 
     public function getRes()
     {
