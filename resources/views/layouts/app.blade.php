@@ -48,7 +48,7 @@
                     </button>
 
                     <p>Selamat Datang Di Sistem Informasi Rekomendasi Makanan Diabetes</p>
-
+                    
                     <!-- Topbar Navbar -->
                     <ul class="navbar-nav ml-auto">
 
