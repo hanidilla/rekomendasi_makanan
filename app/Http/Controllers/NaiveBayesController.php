@@ -203,11 +203,12 @@ class NaiveBayesController extends Controller
         $keyProtein = -1;
         $keyLemak = -1;
         $kadungan = ['karbohidrat','lemak','protein'];
-        $kadunganBagi = ['karbohidrat'=> 60 / 100,'lemak'=>20 / 100,'protein'=>10 / 100];
+        $kadunganBagi = ['karbohidrat'=> 60 / 100,'lemak'=>20 / 100,'protein'=>10 / 100]; 
         $saran = ['pagi','siang','malam'];
 
         $dataBagi = [];
 
+        //probabilitas
         $hari = [];
         $hari['pagi']['data'] =  $payload['kalori'] * 30 / 100;
         $hari['pagi']['protein'] =  $payload['protein'] * 10 / 100;
@@ -241,6 +242,7 @@ class NaiveBayesController extends Controller
                 
                 foreach ($kadungan as $kadunganKey => $kadunganItem) 
                 {
+                    //pengklasifikasian 
                     $bobot = $dataBagi[$saranItem];
                     if($kadunganItem == 'karbohidrat')
                     {
@@ -250,7 +252,7 @@ class NaiveBayesController extends Controller
                                    ->orderBy('energi','DESC')
                                    ->whereNotIn('id',$validated)
                                    //->inRandomOrder()
-                                   ->limit(1)
+                                   ->limit(1) 
                                    ->get();
                     }else
                     {
@@ -266,6 +268,7 @@ class NaiveBayesController extends Controller
                     $makanan = json_decode(json_encode($dataMakanan),true);
                     foreach ($makanan as $makananKey => $makananItem) 
                     {
+                       //pemilihan
                        if($bobotVal <= $payload['kalori'])
                        {
                             array_push($validated, $makananItem['id']);
