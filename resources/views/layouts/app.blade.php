@@ -47,8 +47,7 @@
                         <i class="fa fa-bars"></i>
                     </button>
 
-                    <p>Selamat Datang Di Sistem Informasi Rekomendasi Makanan Diabetes 
-                    </p>
+                    <p>Selamat Datang Di Sistem Informasi Rekomendasi Makanan Diabetes</p>
 
                     <!-- Topbar Navbar -->
                     <ul class="navbar-nav ml-auto">
