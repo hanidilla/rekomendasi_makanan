@@ -208,99 +208,260 @@ class NaiveBayesController extends Controller
 
         $dataBagi = [];
 
-        //probabilitas
+        //Pengemplokan Data Pasien berdasarkan Kategori Waktu
         $hari = [];
         $hari['pagi']['data'] =  $payload['kalori'] * 30 / 100;
-        $hari['pagi']['protein'] =  $payload['protein'] * 10 / 100;
-        $hari['pagi']['karbohidrat'] =  $payload['karbohidrat'] * 60 / 100;
-        $hari['pagi']['lemak'] =  $payload['lemak'] * 20 / 100;
-        $dataBagi['pagi'] = $hari['pagi']['data'] + $hari['pagi']['protein'] + $hari['pagi']['karbohidrat'] + $hari['pagi']['lemak'];
+        $dataBagi['pagi'] = $hari['pagi']['data'];
 
         $hari['siang']['data'] = $payload['kalori'] * 40 / 100;
-        $hari['siang']['protein'] =  $payload['protein'] * 10 / 100;
-        $hari['siang']['karbohidrat'] =  $payload['karbohidrat'] * 60 / 100;
-        $hari['siang']['lemak'] =  $payload['lemak'] * 20 / 100;
-        $dataBagi['siang'] = $hari['siang']['data'] + $hari['siang']['protein'] + $hari['siang']['karbohidrat'] + $hari['siang']['lemak'];
+        $dataBagi['siang'] = $hari['siang']['data'];
 
         $hari['malam']['data'] = $payload['kalori'] * 30 / 100;
-        $hari['malam']['protein'] =  $payload['protein'] * 10 / 100;
-        $hari['malam']['karbohidrat'] =  $payload['karbohidrat'] * 60 / 100;
-        $hari['malam']['lemak'] =  $payload['lemak'] * 20 / 100;
-        $dataBagi['malam'] = $hari['malam']['data'] + $hari['malam']['protein'] + $hari['malam']['karbohidrat'] + $hari['malam']['lemak'];
+        $dataBagi['malam'] = $hari['malam']['data'];
         
-        $arr = [];
-        $arrId = [];
-        $makananArr = [];
-        $validated = [];
-        $bobotVal = 0;
-        foreach ($saran as $saranKey => $saranItem) 
+        $kadunganBagi = ['karbohidrat'=> 60 / 100,'lemak'=>20 / 100,'protein'=>10 / 100];
+
+        //Pengelompokan data kebutuhan makanan berdasarkan kategori waktu
+        $dataMakananPagi = DB::table('bahan_makanan')->where('type','pagi')->get();
+        $dataMakananSiang = DB::table('bahan_makanan')->where('type','siang')->get();
+        $dataMakananMalam = DB::table('bahan_makanan')->where('type','malam')->get();
+
+        //total data
+        $totaldataMakananPagi = count($dataMakananPagi);
+        $totaldataMakananSiang = count($dataMakananSiang);
+        $totaldataMakananMalam = count($dataMakananMalam);
+
+        //Probabilitas Fitur
+
+        //mean
+        $dataMakananPagiSum = DB::table('bahan_makanan')->where('type','pagi')->sum('energi') / $totaldataMakananPagi;
+        $dataMakananSiangSum = DB::table('bahan_makanan')->where('type','siang')->sum('energi') / $totaldataMakananSiang;
+        $dataMakananMalamSum = DB::table('bahan_makanan')->where('type','malam')->sum('energi') / $totaldataMakananMalam;
+
+        $mean = [];
+        $mean['pagi'] = $dataMakananPagiSum;
+        $mean['siang'] = $dataMakananSiangSum;
+        $mean['malam'] = $dataMakananMalamSum;
+        //end of mean
+
+        //standart deviasi
+        $std = [];
+        $std['pagi'] = 0;
+        $std['siang'] = 0;
+        $std['malam'] = 0;
+
+        foreach ($dataMakananPagi as $key => $value) 
         {
-                $keyNumber = [];
-                $keyNumber['pagi'] =  0;
-                $keyNumber['siang'] = 0;
-                $keyNumber['malam'] = 0;
-                
-                foreach ($kadungan as $kadunganKey => $kadunganItem) 
-                {
-                    //pengklasifikasian 
-                    $bobot = $dataBagi[$saranItem];
-                    if($kadunganItem == 'karbohidrat')
-                    {
-                        $dataMakanan = DB::table('bahan_makanan')
-                                   ->where('kandungan_makanan',$kadunganItem)
-                                   ->where('energi','<=',$bobot)
-                                   ->orderBy('energi','DESC')
-                                   ->whereNotIn('id',$validated)
-                                   //->inRandomOrder()
-                                   ->limit(1) 
-                                   ->get();
-                    }else
-                    {
-                        $dataMakanan = DB::table('bahan_makanan')
-                                   ->where('kandungan_makanan',$kadunganItem)
-                                   ->where('energi','<=',$bobot)
-                                   ->orderBy('energi','DESC')
-                                   //->whereNotIn('id',$validated)
-                                   //->inRandomOrder()
-                                   ->limit(1)
-                                   ->get();
-                    }
-                    $makanan = json_decode(json_encode($dataMakanan),true);
-                    foreach ($makanan as $makananKey => $makananItem) 
-                    {
-                       //pemilihan
-                       if($bobotVal <= $payload['kalori'])
-                       {
-                            array_push($validated, $makananItem['id']);
-                            array_push($arrId, $makananItem['id']);
-                            array_push($makananArr, $makananItem['bahan_makanan']);
-                            $keyNumber[$saranItem]++;
-                            $number = $keyNumber[$saranItem];
-                            $bobotVal += $makananItem['energi'];
-                            $berat = $makananItem['energi'] * $kadunganBagi[$kadunganItem];
-                            $arr[$saranItem][$number]['makanan'] = $makananItem['bahan_makanan'];
-                            $arr[$saranItem][$number]['berat'] = $berat;
-                            $arr[$saranItem][$number]['kalori'] = $makananItem['energi'];
-                            $arr[$saranItem][$number]['karbohidrat'] = $makananItem['karbohidrat'];
-                            $arr[$saranItem][$number]['protein'] = $makananItem['protein'];
-                            $arr[$saranItem][$number]['lemak'] = $makananItem['lemak'];
-                            $arr[$saranItem][$number]['kandungan_makanan'] = $makananItem['kandungan_makanan'];
-                        }
-                    }
-               }
+            $std['pagi'] += ($value->energi-$mean['pagi']) * ($value->energi-$mean['pagi']);
+        }
+        $std['pagi'] = sqrt($std['pagi'] / $totaldataMakananPagi);
+
+        foreach ($dataMakananSiang as $key => $value) 
+        {
+            $std['siang'] += ($value->energi-$mean['siang']) * ($value->energi-$mean['siang']);
+        }
+        $std['siang'] = sqrt($std['siang'] / $totaldataMakananSiang);
+
+        foreach ($dataMakananMalam as $key => $value) 
+        {
+            $std['malam'] += ($value->energi-$mean['malam']) * ($value->energi-$mean['malam']);
+        }
+        $std['malam'] = sqrt($std['malam'] / $totaldataMakananMalam);
+        //end of deviasi
+
+        //Probabilitas Posterior 
+        $pi = sqrt(2 * 3.14); // pi probobilitas
+        //convert to array of object
+
+        $dataMakananPagi = DB::table('bahan_makanan')->where('type','pagi')->get();
+        $dataMakananPagi = json_decode(json_encode($dataMakananPagi),true);
+        $dataMakananSiang = DB::table('bahan_makanan')->where('type','siang')->get();
+        $dataMakananSiang = json_decode(json_encode($dataMakananSiang),true);
+        $dataMakananMalam = DB::table('bahan_makanan')->where('type','malam')->get();
+        $dataMakananMalam = json_decode(json_encode($dataMakananMalam),true);
+
+        //hitung probabilitas posterior
+        foreach ($dataMakananPagi as $key => $value) 
+        {
+            $kali = (($value['energi'] - $mean['pagi']) / $std['pagi']) * (($value['energi'] - $mean['pagi']) / $std['pagi']);
+            $probi = 1 / ($std['pagi'] * $pi) * exp(-0.5 * $kali);
+            $dataMakananPagi[$key]['prob'] = $probi;
         }
 
-        // $finalArr = [];
-        // foreach ($saran as $saranKey => $saranItem)
-        // {
-        //     foreach ($kadungan as $kadunganKey => $kadunganItem)
-        //     {
-        //         $finalArr[$saranItem][$kadunganKey] = $arr[$saranItem][$kadunganItem][array_rand($arr[$saranItem][$kadunganItem])];
-        //     }
-        // }
+        foreach ($dataMakananSiang as $key => $value) 
+        {
+            $kali = (($value['energi'] - $mean['siang']) / $std['siang']) * (($value['energi'] - $mean['siang']) / $std['siang']);
+            $probi = 1 / ($std['siang'] * $pi) * exp(-0.5 * $kali);
+            $dataMakananSiang[$key]['prob'] = $probi;
+        }
+
+        foreach ($dataMakananMalam as $key => $value) 
+        {
+            $kali = (($value['energi'] - $mean['malam']) / $std['malam']) * (($value['energi'] - $mean['malam']) / $std['malam']);
+            $probi = 1 / ($std['malam'] * $pi) * exp(-0.5 * $kali);
+            $dataMakananMalam[$key]['prob'] = $probi;
+        }
+        
+        //prankingan
+        $dataMakananPagi = $this->array_sort_by_column_desc($dataMakananPagi,'prob');
+        $dataMakananSiang = $this->array_sort_by_column_desc($dataMakananSiang,'prob');
+        $dataMakananMalam = $this->array_sort_by_column_desc($dataMakananMalam,'prob');
+
+        $arr = [];
+        $arr['pagi'] = [];
+        $arr['siang'] = [];
+        $arr['malam'] = [];
+        //pengkalisifikan
+        //pagi
+        $tempPagiKarbo = [];
+        foreach ($dataMakananPagi as $key => $makananItem) 
+        {
+            if($makananItem['kandungan_makanan'] == 'karbohidrat')
+            {
+                $berat = $dataMakananPagi[$key]['energi'] * $kadunganBagi[$dataMakananPagi[$key]['kandungan_makanan']];
+                $tempPagiKarbo['makanan'] = $dataMakananPagi[$key]['bahan_makanan'];
+                $tempPagiKarbo['berat'] = $berat;
+                $tempPagiKarbo['kalori'] = $dataMakananPagi[$key]['energi'];
+                $tempPagiKarbo['karbohidrat'] = $dataMakananPagi[$key]['karbohidrat'];
+                $tempPagiKarbo['protein'] = $dataMakananPagi[$key]['protein'];
+                $tempPagiKarbo['lemak'] = $dataMakananPagi[$key]['lemak'];
+                $tempPagiKarbo['kandungan_makanan'] = $dataMakananPagi[$key]['kandungan_makanan'];
+                $tempPagiKarbo['prob'] = $dataMakananPagi[$key]['prob'];
+                break;
+            }
+        }
+        $arr['pagi'][0] = $tempPagiKarbo;
+        $numberPagi = 1;
+        foreach ($dataMakananPagi as $key => $value) 
+        {
+            if($numberPagi <= 3)
+            {
+                if($value['kandungan_makanan'] != 'karbohidrat')
+                {
+                    $berat = $dataMakananPagi[$key]['energi'] * $kadunganBagi[$dataMakananPagi[$key]['kandungan_makanan']];
+                    $arr['pagi'][$numberPagi]['makanan'] = $dataMakananPagi[$key]['bahan_makanan'];
+                    $arr['pagi'][$numberPagi]['berat'] = $berat;
+                    $arr['pagi'][$numberPagi]['kalori'] = $dataMakananPagi[$key]['energi'];
+                    $arr['pagi'][$numberPagi]['karbohidrat'] = $dataMakananPagi[$key]['karbohidrat'];
+                    $arr['pagi'][$numberPagi]['protein'] = $dataMakananPagi[$key]['protein'];
+                    $arr['pagi'][$numberPagi]['lemak'] = $dataMakananPagi[$key]['lemak'];
+                    $arr['pagi'][$numberPagi]['kandungan_makanan'] = $dataMakananPagi[$key]['kandungan_makanan'];
+                    $arr['pagi'][$numberPagi]['prob'] = $dataMakananPagi[$key]['prob'];
+                    $numberPagi++;
+                }
+            }
+        }
+        //siang
+        $tempSiangKarbo = [];
+        foreach ($dataMakananSiang as $key => $makananItem) 
+        {
+            if($makananItem['kandungan_makanan'] == 'karbohidrat')
+            {
+                $berat = $dataMakananSiang[$key]['energi'] * $kadunganBagi[$dataMakananSiang[$key]['kandungan_makanan']];
+                $tempSiangKarbo['makanan'] = $dataMakananSiang[$key]['bahan_makanan'];
+                $tempSiangKarbo['berat'] = $berat;
+                $tempSiangKarbo['kalori'] = $dataMakananSiang[$key]['energi'];
+                $tempSiangKarbo['karbohidrat'] = $dataMakananSiang[$key]['karbohidrat'];
+                $tempSiangKarbo['protein'] = $dataMakananSiang[$key]['protein'];
+                $tempSiangKarbo['lemak'] = $dataMakananSiang[$key]['lemak'];
+                $tempSiangKarbo['kandungan_makanan'] = $dataMakananSiang[$key]['kandungan_makanan'];
+                $tempSiangKarbo['prob'] = $dataMakananSiang[$key]['prob'];
+                break;
+            }
+        }
+        $arr['siang'][0] = $tempSiangKarbo;
+        $numberSiang = 1;
+        foreach ($dataMakananSiang as $key => $value) 
+        {
+            if($numberSiang <= 3)
+            {
+                if($value['kandungan_makanan'] != 'karbohidrat' && $makananItem['bahan_makanan'])
+                {
+                    $berat = $dataMakananSiang[$key]['energi'] * $kadunganBagi[$dataMakananSiang[$key]['kandungan_makanan']];
+                    $arr['siang'][$numberSiang]['makanan'] = $dataMakananSiang[$key]['bahan_makanan'];
+                    $arr['siang'][$numberSiang]['berat'] = $berat;
+                    $arr['siang'][$numberSiang]['kalori'] = $dataMakananSiang[$key]['energi'];
+                    $arr['siang'][$numberSiang]['karbohidrat'] = $dataMakananSiang[$key]['karbohidrat'];
+                    $arr['siang'][$numberSiang]['protein'] = $dataMakananSiang[$key]['protein'];
+                    $arr['siang'][$numberSiang]['lemak'] = $dataMakananSiang[$key]['lemak'];
+                    $arr['siang'][$numberSiang]['kandungan_makanan'] = $dataMakananSiang[$key]['kandungan_makanan'];
+                    $arr['siang'][$numberSiang]['prob'] = $dataMakananSiang[$key]['prob'];
+                    $numberSiang++;
+                }
+            }
+        }
+        //malam
+        $tempMalamKarbo = [];
+        foreach ($dataMakananMalam as $key => $makananItem) 
+        {
+            if($makananItem['kandungan_makanan'] == 'karbohidrat')
+            {
+               //$tempMalamKarbo = $makananItem;
+                $berat = $dataMakananMalam[$key]['energi'] * $kadunganBagi[$dataMakananMalam[$key]['kandungan_makanan']];
+                $tempMalamKarbo['makanan'] = $dataMakananMalam[$key]['bahan_makanan'];
+                $tempMalamKarbo['berat'] = $berat;
+                $tempMalamKarbo['kalori'] = $dataMakananMalam[$key]['energi'];
+                $tempMalamKarbo['karbohidrat'] = $dataMakananMalam[$key]['karbohidrat'];
+                $tempMalamKarbo['protein'] = $dataMakananMalam[$key]['protein'];
+                $tempMalamKarbo['lemak'] = $dataMakananMalam[$key]['lemak'];
+                $tempMalamKarbo['kandungan_makanan'] = $dataMakananMalam[$key]['kandungan_makanan'];
+                $tempMalamKarbo['prob'] = $dataMakananMalam[$key]['prob'];
+                break;
+            }
+        }
+        $arr['malam'][0] = $tempMalamKarbo;
+        $numberMalam = 1;
+        foreach ($dataMakananMalam as $key => $value) 
+        {
+            if($numberMalam <= 3)
+            {
+                if($value['kandungan_makanan'] != 'karbohidrat' && $makananItem['bahan_makanan'])
+                {
+                    $berat = $dataMakananMalam[$key]['energi'] * $kadunganBagi[$dataMakananMalam[$key]['kandungan_makanan']];
+                    $arr['malam'][$numberMalam]['makanan'] = $dataMakananMalam[$key]['bahan_makanan'];
+                    $arr['malam'][$numberMalam]['berat'] = $berat;
+                    $arr['malam'][$numberMalam]['kalori'] = $dataMakananMalam[$key]['energi'];
+                    $arr['malam'][$numberMalam]['karbohidrat'] = $dataMakananMalam[$key]['karbohidrat'];
+                    $arr['malam'][$numberMalam]['protein'] = $dataMakananMalam[$key]['protein'];
+                    $arr['malam'][$numberMalam]['lemak'] = $dataMakananMalam[$key]['lemak'];
+                    $arr['malam'][$numberMalam]['kandungan_makanan'] = $dataMakananMalam[$key]['kandungan_makanan'];
+                    $arr['malam'][$numberMalam]['prob'] = $dataMakananMalam[$key]['prob'];
+                    $numberMalam++;
+                }
+            }
+        }
+        //dd($arr['malam']);
         $result = [];
         $result['arr'] = $arr;
         return $result;
+    }
+
+    function checkValueIsAvail($arr,$index,$value)
+    {
+        $ada = false;
+        foreach ($arr as $key => $value) 
+        {
+            if(isset($value[$index]))
+            {
+                if($value[$index] == $value)
+                {
+                    $ada = true;
+                    break;
+                }
+            }
+        }
+        return $ada;
+    }
+
+    function array_sort_by_column_desc(&$arr, $col, $dir = SORT_DESC) 
+    {
+        $sort_col = array();
+        foreach ($arr as $key => $row) {
+            $sort_col[$key] = $row[$col];
+        }
+
+        array_multisort($sort_col, $dir, $arr);
+        return $arr;
     }
 
 
@@ -349,10 +510,11 @@ class NaiveBayesController extends Controller
             $qry->groupBy('kgz.id');
             $data = $qry->get();
             $dataRet = json_decode(json_encode($data),true);
-
+            //dd($dataRet);
             foreach ($dataRet as $key => $value) 
             {
                 $dataRet[$key]['data'] = json_decode($dataRet[$key]['data'],true);
+                //dd($dataRet[$key]['data']);
                 $pasien = DB::table('pasien')->where('id',$value['user_id'])->first();
                 $dataRet[$key]['nama_pasien'] = '';
                 $dataRet[$key]['jenis_kelamin'] = '';

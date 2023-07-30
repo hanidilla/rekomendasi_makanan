@@ -109,10 +109,15 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
+
                                                     @foreach($item['data']['pagi'] as $dataKey => $childItem)
                                                     <tr>
                                                         <td>{{$dataKey}}</td>
-                                                       <td>{{$childItem['makanan']}}</td>
+                                                        @if(isset($childItem['makanan']))
+                                                        <td>{{$childItem['makanan']}}</td>
+                                                        @else
+                                                         <td>{{$childItem['bahan_makanan']}}</td>
+                                                        @endif
                                                     </tr>
                                                     @endforeach
                                                 </tbody>
@@ -129,7 +134,11 @@
                                                     @foreach($item['data']['siang'] as $dataKey => $childItem)
                                                     <tr>
                                                         <td>{{$dataKey}}</td>
+                                                         @if(isset($childItem['makanan']))
                                                         <td>{{$childItem['makanan']}}</td>
+                                                        @else
+                                                         <td>{{$childItem['bahan_makanan']}}</td>
+                                                        @endif
                                                     </tr>
                                                     @endforeach
                                                 </tbody>
@@ -145,7 +154,11 @@
                                                     @foreach($item['data']['malam'] as $dataKey => $childItem)
                                                     <tr>
                                                         <td>{{$dataKey}}</td>
+                                                         @if(isset($childItem['makanan']))
                                                         <td>{{$childItem['makanan']}}</td>
+                                                        @else
+                                                         <td>{{$childItem['bahan_makanan']}}</td>
+                                                        @endif
                                                     </tr>
                                                     @endforeach
                                                 </tbody>
