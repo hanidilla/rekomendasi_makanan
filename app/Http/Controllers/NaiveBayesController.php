@@ -219,7 +219,7 @@ class NaiveBayesController extends Controller
         $hari['malam']['data'] = $payload['kalori'] * 30 / 100;
         $dataBagi['malam'] = $hari['malam']['data'];
         
-        $kadunganBagi = ['karbohidrat'=> 60 / 100,'lemak'=>20 / 100,'protein'=>10 / 100];
+        $kadunganBagi = ['karbohidrat'=> 60 / 100,'lemak'=>20 / 100,'protein'=>10 / 100]; // untuk berat makanan
 
         //Pengelompokan data kebutuhan makanan berdasarkan kategori waktu
         $dataMakananPagi = DB::table('bahan_makanan')->where('type','pagi')->get();
