@@ -219,7 +219,7 @@ class NaiveBayesController extends Controller
         $hari['malam']['data'] = $payload['kalori'] * 30 / 100;
         $dataBagi['malam'] = $hari['malam']['data'];
         
-        $kadunganBagi = ['karbohidrat'=> 60 / 100,'lemak'=>20 / 100,'protein'=>10 / 100];
+        $kadunganBagi = ['karbohidrat'=> 60 / 100,'lemak'=>20 / 100,'protein'=>10 / 100]; // ini untuk berat makanan
 
         //Pengelompokan data kebutuhan makanan berdasarkan kategori waktu
         $dataMakananPagi = DB::table('bahan_makanan')->where('type','pagi')->get();
@@ -284,6 +284,7 @@ class NaiveBayesController extends Controller
         foreach ($dataMakananPagi as $key => $value) 
         {
             $kali = (($value['energi'] - $mean['pagi']) / $std['pagi']) * (($value['energi'] - $mean['pagi']) / $std['pagi']);
+            
             $probi = 1 / ($std['pagi'] * $pi) * exp(-0.5 * $kali);
             $dataMakananPagi[$key]['prob'] = $probi;
         }
@@ -311,6 +312,11 @@ class NaiveBayesController extends Controller
         $arr['pagi'] = [];
         $arr['siang'] = [];
         $arr['malam'] = [];
+
+        $energi = [];
+        $energi['pagi'] = 0;
+        $energi['siang'] = 0;
+        $energi['malam'] = 0;
         //pengkalisifikan
         //pagi
         $tempPagiKarbo = [];
@@ -318,6 +324,7 @@ class NaiveBayesController extends Controller
         {
             if($makananItem['kandungan_makanan'] == 'karbohidrat')
             {
+                $energi['pagi'] += $dataMakananPagi[$key]['energi'];
                 $berat = $dataMakananPagi[$key]['energi'] * $kadunganBagi[$dataMakananPagi[$key]['kandungan_makanan']];
                 $tempPagiKarbo['makanan'] = $dataMakananPagi[$key]['bahan_makanan'];
                 $tempPagiKarbo['berat'] = $berat;
@@ -327,17 +334,18 @@ class NaiveBayesController extends Controller
                 $tempPagiKarbo['lemak'] = $dataMakananPagi[$key]['lemak'];
                 $tempPagiKarbo['kandungan_makanan'] = $dataMakananPagi[$key]['kandungan_makanan'];
                 $tempPagiKarbo['prob'] = $dataMakananPagi[$key]['prob'];
-                break;
+                break; // 1 karbo
             }
         }
         $arr['pagi'][0] = $tempPagiKarbo;
         $numberPagi = 1;
         foreach ($dataMakananPagi as $key => $value) 
         {
-            if($numberPagi <= 3)
+            if($energi['pagi'] <= $dataBagi['pagi'])
             {
                 if($value['kandungan_makanan'] != 'karbohidrat')
                 {
+                    $energi['pagi'] += $dataMakananPagi[$key]['energi'];
                     $berat = $dataMakananPagi[$key]['energi'] * $kadunganBagi[$dataMakananPagi[$key]['kandungan_makanan']];
                     $arr['pagi'][$numberPagi]['makanan'] = $dataMakananPagi[$key]['bahan_makanan'];
                     $arr['pagi'][$numberPagi]['berat'] = $berat;
@@ -357,6 +365,7 @@ class NaiveBayesController extends Controller
         {
             if($makananItem['kandungan_makanan'] == 'karbohidrat')
             {
+                $energi['siang'] += $dataMakananSiang[$key]['energi'];
                 $berat = $dataMakananSiang[$key]['energi'] * $kadunganBagi[$dataMakananSiang[$key]['kandungan_makanan']];
                 $tempSiangKarbo['makanan'] = $dataMakananSiang[$key]['bahan_makanan'];
                 $tempSiangKarbo['berat'] = $berat;
@@ -373,10 +382,11 @@ class NaiveBayesController extends Controller
         $numberSiang = 1;
         foreach ($dataMakananSiang as $key => $value) 
         {
-            if($numberSiang <= 3)
+            if($energi['siang'] <= $dataBagi['siang'])
             {
                 if($value['kandungan_makanan'] != 'karbohidrat' && $makananItem['bahan_makanan'])
                 {
+                    $energi['siang'] += $dataMakananSiang[$key]['energi'];
                     $berat = $dataMakananSiang[$key]['energi'] * $kadunganBagi[$dataMakananSiang[$key]['kandungan_makanan']];
                     $arr['siang'][$numberSiang]['makanan'] = $dataMakananSiang[$key]['bahan_makanan'];
                     $arr['siang'][$numberSiang]['berat'] = $berat;
@@ -396,7 +406,7 @@ class NaiveBayesController extends Controller
         {
             if($makananItem['kandungan_makanan'] == 'karbohidrat')
             {
-               //$tempMalamKarbo = $makananItem;
+                $energi['malam'] += $dataMakananMalam[$key]['energi'];
                 $berat = $dataMakananMalam[$key]['energi'] * $kadunganBagi[$dataMakananMalam[$key]['kandungan_makanan']];
                 $tempMalamKarbo['makanan'] = $dataMakananMalam[$key]['bahan_makanan'];
                 $tempMalamKarbo['berat'] = $berat;
@@ -413,10 +423,11 @@ class NaiveBayesController extends Controller
         $numberMalam = 1;
         foreach ($dataMakananMalam as $key => $value) 
         {
-            if($numberMalam <= 3)
+            if($energi['malam'] <= $dataBagi['malam'])
             {
                 if($value['kandungan_makanan'] != 'karbohidrat' && $makananItem['bahan_makanan'])
                 {
+                    $energi['malam'] += $dataMakananMalam[$key]['energi'];
                     $berat = $dataMakananMalam[$key]['energi'] * $kadunganBagi[$dataMakananMalam[$key]['kandungan_makanan']];
                     $arr['malam'][$numberMalam]['makanan'] = $dataMakananMalam[$key]['bahan_makanan'];
                     $arr['malam'][$numberMalam]['berat'] = $berat;
