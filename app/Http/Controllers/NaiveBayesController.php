@@ -341,7 +341,7 @@ class NaiveBayesController extends Controller
         $numberPagi = 1;
         foreach ($dataMakananPagi as $key => $value) 
         {
-            if($energi['pagi'] <= $dataBagi['pagi'])
+            if($energi['pagi'] <= $dataBagi['pagi']) // dicari sampai mendapatkan pebmbagian sesuai
             {
                 if($value['kandungan_makanan'] != 'karbohidrat')
                 {
@@ -382,7 +382,7 @@ class NaiveBayesController extends Controller
         $numberSiang = 1;
         foreach ($dataMakananSiang as $key => $value) 
         {
-            if($energi['siang'] <= $dataBagi['siang'])
+            if($energi['siang'] <= $dataBagi['siang']) // dicari sampai mendapatkan pebmbagian sesuai
             {
                 if($value['kandungan_makanan'] != 'karbohidrat' && $makananItem['bahan_makanan'])
                 {
@@ -423,7 +423,7 @@ class NaiveBayesController extends Controller
         $numberMalam = 1;
         foreach ($dataMakananMalam as $key => $value) 
         {
-            if($energi['malam'] <= $dataBagi['malam'])
+            if($energi['malam'] <= $dataBagi['malam']) // dicari sampai mendapatkan pebmbagian sesuai
             {
                 if($value['kandungan_makanan'] != 'karbohidrat' && $makananItem['bahan_makanan'])
                 {
