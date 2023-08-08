@@ -13,9 +13,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-// Route::get('/', function () {
-//     return view('pages.web.home');
-// });
 Route::get('/', [App\Http\Controllers\HomeController::class, 'web']);
 
 Route::get('/list-makanan', function () {
@@ -51,3 +48,9 @@ Route::get("/faktor-stress", function () {
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
+//ahli_gizi
+Route::get('/ahli-gizi', [App\Http\Controllers\AhliGiziController::class, 'index'])->middleware("auth");
+Route::get('/ahli-gizi-delete/{id}', [App\Http\Controllers\AhliGiziController::class, 'delete'])->middleware("auth");
+Route::post('/ahli-gizi-store', [App\Http\Controllers\AhliGiziController::class, 'store'])->middleware("auth");
+Route::post('/ahli-gizi-update/{id}', [App\Http\Controllers\AhliGiziController::class, 'update'])->middleware("auth");

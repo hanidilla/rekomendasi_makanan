@@ -17,12 +17,19 @@
             <i class="fas fa-fw fa-tachometer-alt"></i>
             <span>Dashboard</span></a>
     </li>
+    @if(Auth::user()->role == 'superadmin')
+    <li class="nav-item">
+        <a class="nav-link" href="/ahli-gizi">
+            <i class="fa fa-users"></i>
+            <span>AhliGizi</span></a>
+    </li>
+    @endif
     <li class="nav-item active">
         <a class="nav-link" href="/list-makanan">
             <i class="fa fa-bacon"></i>
             <span>Bahan Makanan</span></a>
     </li>
-        <li class="nav-item">
+    <li class="nav-item">
         <a class="nav-link" href="/faktor-aktivitas">
             <i class="fas fa-fw fa-hiking"></i>
             <span>Faktor Aktivitas</span></a>

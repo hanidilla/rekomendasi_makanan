@@ -1,6 +1,4 @@
 @extends('layouts.app')
-
-
 @section('content')
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
         <h1 class="h3 mb-0 text-gray-800">Bahan Makanan</h1>
@@ -61,20 +59,14 @@
          <div class="form-group">
             <label for="">Tipe</label>
            <select class="form-control form-control-sm" id="tipe">
-               <option value="makanan_pokok">
-                   Makanan Pokok
+               <option value="pagi" id="pagi">
+                   Pagi
                </option>
-               <option value="makanan_pendamping">
-                   Makanan Pendamping
+               <option value="siang" id="siang">
+                   Siang
                </option>
-               <option value="lauk_pauk">
-                   Lauk Pauk
-               </option>
-               <option value="buah">
-                   Buah
-               </option>
-               <option value="sayur">
-                   Sayur
+               <option value="malam" id="malam">
+                   Malam
                </option>
            </select>
         </div>
@@ -114,20 +106,14 @@
         <div class="form-group">
             <label for="">Tipe</label>
            <select class="form-control form-control-sm" id="tipe-edit">
-               <option value="makanan_pokok" id="makanan_pokok">
-                   Makanan Pokok
+               <option value="pagi" id="pagi">
+                   Pagi
                </option>
-               <option value="makanan_pendamping" id="makanan_pendamping">
-                   Makanan Pendamping
+               <option value="siang" id="siang">
+                   Siang
                </option>
-               <option value="lauk_pauk" id="lauk_pauk">
-                   Lauk Pauk
-               </option>
-               <option value="buah" id="buah">
-                   Buah
-               </option>
-               <option value="sayur" id="sayur">
-                   Sayur
+               <option value="malam" id="malam">
+                   Malam
                </option>
            </select>
         </div>
