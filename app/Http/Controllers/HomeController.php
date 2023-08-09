@@ -38,8 +38,8 @@ class HomeController extends Controller
         $ada = null;
         if($request->kode_pasien != null)
         {
-            //$pasien = DB::table('pasien')->where('kode',$request->kode_pasien)->first();
-            
+            $pasienCheck = DB::table('pasien')->where('nama', 'like', '%' .$request->kode_pasien. '%')->first();
+           //dd($pasienCheck);
             $qry = DB::table('saran_makanan as sm');
                 $qry->join('kebutuhan_gizi as kgz','kgz.id','=','sm.kebutuhan_gizi_id');
                 $qry->join('pasien as ps','ps.id','=','kgz.user_id');
@@ -47,13 +47,19 @@ class HomeController extends Controller
                     ,'kgz.activity_fac','kgz.kalori','kgz.protein','kgz.lemak','kgz.karbohidrat');
             if($request->kode_pasien != null)
             {
-                $qry->where('ps.kode',$request->kode_pasien);
-                $qry->Orwhere('kgz.kode',$request->kode_pasien);
+                if($pasienCheck)
+                {
+                    $qry->where('kgz.user_id', $pasienCheck->id);
+                }else
+                {
+                     $qry->where('ps.kode',$request->kode_pasien);
+                     $qry->Orwhere('kgz.kode',$request->kode_pasien);
+                }
             }
             $qry->groupBy('kgz.id');
             $data = $qry->get();
             $dataRet = json_decode(json_encode($data),true);
-
+            //dd($dataRet);
             foreach ($dataRet as $key => $value) 
             {
                 $dataRet[$key]['data'] = json_decode($dataRet[$key]['data'],true);

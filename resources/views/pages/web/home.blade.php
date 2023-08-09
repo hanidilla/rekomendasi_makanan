@@ -82,8 +82,8 @@
             </h4>
             <div class="form-row ">
               <div class="form-group col-lg-12">
-                <label for="inputPatientName">Kode Pasien</label>
-                <input type="text" class="form-control" id="inputPatientName" name="kode_pasien" required placeholder="Contoh : RKMDM5652 atau RKMDM5-120230716" value="{{$request->kode_pasien}}">
+                <label for="inputPatientName">Kode Pasien Atau Nama</label>
+                <input type="text" class="form-control" id="inputPatientName" name="kode_pasien" required placeholder="Contoh : RKMDM5652 atau RKMDM5-120230716 Atau Muhammad Ardian" value="{{$request->kode_pasien}}">
                 @if ($ada != null)
                 	<br>
                 	<m style="color: red">{{$ada}}</m>
@@ -109,5 +109,14 @@
 
 
 
-
+  <!-- footer section -->
+  <footer class="footer_section">
+    <div class="container">
+      <p>
+        &copy; <span id="displayYear"></span> All Rights Reserved By
+        <a href="https://html.design/">Free Html Templates</a>
+      </p>
+    </div>
+  </footer>
+  <!-- footer section -->
   @endsection
