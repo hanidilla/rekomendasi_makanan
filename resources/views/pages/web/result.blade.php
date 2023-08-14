@@ -86,7 +86,7 @@
                             </div>
                             <div class="col-md-4">
                                 <ul>
-                                    <b>Makanan Pagi</b>
+                                    <b>Makanan Siang</b>
                                     @foreach($item['data']['siang'] as $dataKey => $childItem)
                                     <li>{{$dataKey+1}} - {{$childItem['makanan']}}</li>
                                     @endforeach
@@ -94,7 +94,7 @@
                             </div>
                             <div class="col-md-4">
                                 <ul>
-                                    <b>Makanan Pagi</b>
+                                    <b>Makanan Malam</b>
                                     @foreach($item['data']['malam'] as $dataKey => $childItem)
                                     <li>{{$dataKey+1}} - {{$childItem['makanan']}}</li>
                                     @endforeach

@@ -208,7 +208,7 @@ class NaiveBayesController extends Controller
 
         $dataBagi = [];
 
-        //Pengemplokan Data Pasien berdasarkan Kategori Waktu
+        //Pengelompokan Data Pasien berdasarkan Kategori Waktu
         $hari = [];
         $hari['pagi']['data'] =  $payload['kalori'] * 30 / 100;
         $dataBagi['pagi'] = $hari['pagi']['data'];
@@ -254,9 +254,9 @@ class NaiveBayesController extends Controller
 
         foreach ($dataMakananPagi as $key => $value) 
         {
-            $std['pagi'] += ($value->energi-$mean['pagi']) * ($value->energi-$mean['pagi']);
+            $std['pagi'] += ($value->energi-$mean['pagi']) * ($value->energi-$mean['pagi']); //value itu objek bahan makanan
         }
-        $std['pagi'] = sqrt($std['pagi'] / $totaldataMakananPagi);
+        $std['pagi'] = sqrt($std['pagi'] / $totaldataMakananPagi); //mencari akar dibagi total makanan
 
         foreach ($dataMakananSiang as $key => $value) 
         {
@@ -281,13 +281,14 @@ class NaiveBayesController extends Controller
         $dataMakananSiang = json_decode(json_encode($dataMakananSiang),true);
         $dataMakananMalam = DB::table('bahan_makanan')->where('type','malam')->get();
         $dataMakananMalam = json_decode(json_encode($dataMakananMalam),true);
+        //data array
 
         //hitung probabilitas posterior
         foreach ($dataMakananPagi as $key => $value) 
         {
             $kali = (($value['energi'] - $mean['pagi']) / $std['pagi']) * (($value['energi'] - $mean['pagi']) / $std['pagi']);
             
-            $probi = 1 / ($std['pagi'] * $pi) * exp(-0.5 * $kali);
+            $probi = 1 / ($std['pagi'] * $pi) * exp(-0.5 * $kali);//-0.5 standar probabilitas posterior $kali = ekponen
             $dataMakananPagi[$key]['prob'] = $probi;
         }
 
@@ -305,7 +306,7 @@ class NaiveBayesController extends Controller
             $dataMakananMalam[$key]['prob'] = $probi;
         }
         
-        //prankingan
+        //perankingan berdasarkan probabilitas
         $dataMakananPagi = $this->array_sort_by_column_desc($dataMakananPagi,'prob');
         $dataMakananSiang = $this->array_sort_by_column_desc($dataMakananSiang,'prob');
         $dataMakananMalam = $this->array_sort_by_column_desc($dataMakananMalam,'prob');
@@ -343,7 +344,7 @@ class NaiveBayesController extends Controller
         $numberPagi = 1;
         foreach ($dataMakananPagi as $key => $value) 
         {
-            if($energi['pagi'] <= $dataBagi['pagi']) // dicari sampai mendapatkan pebmbagian sesuai
+            if($energi['pagi'] <= $dataBagi['pagi']) // dicari sampai mendapatkan pembagian sesuai
             {
                 if($value['kandungan_makanan'] != 'karbohidrat')
                 {
