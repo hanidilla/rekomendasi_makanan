@@ -510,6 +510,7 @@ class NaiveBayesController extends Controller
         $dataRet = [];
         if(count($request->all()) > 0)
         {
+            $pasienCheck = DB::table('pasien')->where('nama', 'like', '%' .$request->kode. '%')->first();
             $qry = DB::table('saran_makanan as sm');
                 $qry->join('kebutuhan_gizi as kgz','kgz.id','=','sm.kebutuhan_gizi_id');
                 $qry->join('pasien as ps','ps.id','=','kgz.user_id');
@@ -517,17 +518,21 @@ class NaiveBayesController extends Controller
                     ,'kgz.activity_fac','kgz.kalori','kgz.protein','kgz.lemak','kgz.karbohidrat');
             if($request->kode != null)
             {
-                $qry->where('ps.kode',$request->kode);
-                $qry->Orwhere('kgz.kode',$request->kode);
+                if($pasienCheck)
+                {
+                    $qry->where('kgz.user_id', $pasienCheck->id);
+                }else
+                {
+                     $qry->where('ps.kode',$request->kode);
+                     $qry->Orwhere('kgz.kode',$request->kode);
+                }
             }
             $qry->groupBy('kgz.id');
             $data = $qry->get();
             $dataRet = json_decode(json_encode($data),true);
-            //dd($dataRet);
             foreach ($dataRet as $key => $value) 
             {
                 $dataRet[$key]['data'] = json_decode($dataRet[$key]['data'],true);
-                //dd($dataRet[$key]['data']);
                 $pasien = DB::table('pasien')->where('id',$value['user_id'])->first();
                 $dataRet[$key]['nama_pasien'] = '';
                 $dataRet[$key]['jenis_kelamin'] = '';

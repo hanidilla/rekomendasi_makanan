@@ -39,7 +39,6 @@ class HomeController extends Controller
         if($request->kode_pasien != null)
         {
             $pasienCheck = DB::table('pasien')->where('nama', 'like', '%' .$request->kode_pasien. '%')->first();
-           //dd($pasienCheck);
             $qry = DB::table('saran_makanan as sm');
                 $qry->join('kebutuhan_gizi as kgz','kgz.id','=','sm.kebutuhan_gizi_id');
                 $qry->join('pasien as ps','ps.id','=','kgz.user_id');
